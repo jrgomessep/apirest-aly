@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
       "outDir": "dist",
-      "rootDir": "src",
+      "rootDirs": ["src","tests"],
       "target": "es2021",
       "sourceMap": true,
       "skipLibCheck": true,
@@ -14,8 +14,9 @@
       "strict": true,
       "paths": {
           "@/*": ["*"],
-          "@/tests/*": ["../tests/*"]
+          "@/tests/*": ["../tests/*"],
+          "@/mocks/*": ["../tests/mocks/*"]
       }
     },
-    "include": ["src", "tests", "jest.config.js"]
+    "include": ["src", "tests", "tests/mocks", "jest.config.js"]
   }
