@@ -6,7 +6,12 @@ module.exports = {
             parserOptions: {
                 project: ['./tsconfig.json']
             },
-            plugins: ['jest']
+            plugins: ['jest'],
+            rules: {
+                '@typescript-eslint/consistent-type-definitions': 'off',
+                '@typescript-eslint/no-namespace': 'off',
+                "@typescript-eslint/unbound-method": "off"
+            }
         },
     ]
 };

@@ -1,3 +1,4 @@
+/** @type {import('jest').Config} */
 const config = {
   collectCoverage: true,
   collectCoverageFrom: ['<rootDir>/src/**.ts'],
@@ -15,7 +16,8 @@ const config = {
   transform: {
     '\\.ts$': 'ts-jest'
   },
-  setupFilesAfterEnv: ['<rootDir>/src/config/prisma-client.ts']
+  clearMocks: true,
+  setupFilesAfterEnv: ['<rootDir>/tests/mocks/prisma-mock.ts']
 }
 
 module.exports = config
