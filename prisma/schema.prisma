@@ -20,6 +20,7 @@ model Store {
   locationId Int
   ownerId    Int
   establishedYear Int
+  externalId Int
   disabled   Boolean  @default(false)
   location   Location @relation(fields: [locationId], references: [id])
   owner      Owner    @relation(fields: [ownerId], references: [id])
