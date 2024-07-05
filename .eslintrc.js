@@ -10,7 +10,8 @@ module.exports = {
             rules: {
                 '@typescript-eslint/consistent-type-definitions': 'off',
                 '@typescript-eslint/no-namespace': 'off',
-                "@typescript-eslint/unbound-method": "off"
+                "@typescript-eslint/unbound-method": 'off',
+                "@typescript-eslint/no-misused-promises": 'off'
             }
         },
     ]
