@@ -1,4 +1,4 @@
-import '../main/config/module-alias'
+import '../main/infrastructure/config/module-alias'
 import * as XLSX from 'xlsx'
 import * as path from 'path'
 import * as fs from 'fs'
