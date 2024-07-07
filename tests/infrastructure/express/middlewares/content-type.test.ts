@@ -1,4 +1,4 @@
-import { setupApp } from '@/main/infrastructure/config/app'
+import { setupApp } from '@/infrastructure/express/config/app'
 
 import { type Express } from 'express'
 import request from 'supertest'

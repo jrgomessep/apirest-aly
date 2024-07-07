@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "node --env-file .env dist/main/server.js",
+    "start": "node --env-file .env dist/infrastructure/server.js",
     "build": "rimraf dist && tsc -p tsconfig-build.json",
     "script:data": "node dist/helpers/xlsx-script.js",
     "lint": "eslint .",

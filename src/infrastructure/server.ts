@@ -1,5 +1,5 @@
-import './infrastructure/config/module-alias'
-import { setupApp } from '@/main/infrastructure/config/app'
+import './config/module-alias'
+import { setupApp } from '@/infrastructure/express/config/app'
 
 const createServer = async (): Promise<void> => {
   const app = await setupApp()

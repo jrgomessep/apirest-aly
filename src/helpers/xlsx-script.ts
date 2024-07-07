@@ -1,9 +1,9 @@
-import '../main/infrastructure/config/module-alias'
+import '../infrastructure/config/module-alias'
 import * as XLSX from 'xlsx'
 import * as path from 'path'
 import * as fs from 'fs'
 import { StoreService } from '@/application'
-import prisma from '@/main/infrastructure/prisma'
+import prisma from '@/infrastructure/persistence/prisma'
 
 const filePath = path.resolve('./xlsx/stores.xlsx')
 
@@ -31,10 +31,10 @@ sheetNames.forEach(async sheetName => {
         owner: store.Owner
       })
     } catch (e: any) {
-      console.error('asadasd: ', e.message)
+      console.error('Error: ', e.message)
     }
   }
-  console.log('Importação Concluída')
+  console.log('Import Complete!')
 })
 
 interface Store {
