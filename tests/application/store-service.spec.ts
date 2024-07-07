@@ -3,7 +3,7 @@ import { prismaMock } from '@/mocks/prisma-mock'
 
 jest.mock('@prisma/client')
 
-describe('StoreModel', () => {
+describe('StoreService', () => {
   let storeService: StoreService
   beforeAll(() => {
     storeService = new StoreService(prismaMock)
