@@ -24,6 +24,14 @@ export class StoreService implements Store {
 
   async createStoreWithNames (store: Store.CreateStoreWithNames): Promise<Store.Result | Error> {
     if (store.name !== '') {
+      const storeReturned = await this.prisma.store.findFirst({
+        where: { externalId: store.externalId }
+      })
+
+      if (storeReturned !== null && storeReturned !== undefined) {
+        throw new Error(`Is there a store with id ${store.externalId}`)
+      }
+
       let location = await this.prisma.location.findFirst({
         where: { name: store.location }
       })

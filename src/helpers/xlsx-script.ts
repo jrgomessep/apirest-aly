@@ -21,14 +21,18 @@ sheetNames.forEach(async sheetName => {
   const jsonData: Store[] = XLSX.utils.sheet_to_json(worksheet)
   const storeService = new StoreService(prisma)
   for (const store of jsonData) {
-    await storeService.createStoreWithNames({
-      externalId: store.StoreID,
-      name: store.StoreName,
-      numberOfEmployees: store.NumberOfEmployees,
-      establishedYear: store.EstablishedYear,
-      location: store.Location,
-      owner: store.Owner
-    })
+    try {
+      await storeService.createStoreWithNames({
+        externalId: store.StoreID,
+        name: store.StoreName,
+        numberOfEmployees: store.NumberOfEmployees,
+        establishedYear: store.EstablishedYear,
+        location: store.Location,
+        owner: store.Owner
+      })
+    } catch (e: any) {
+      console.error('asadasd: ', e.message)
+    }
   }
   console.log('Importação Concluída')
 })

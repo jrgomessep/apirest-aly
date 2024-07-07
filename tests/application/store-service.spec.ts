@@ -51,7 +51,35 @@ describe('StoreModel', () => {
     prismaMock.location.findFirst.mockResolvedValue({ id: 1, name: 'Location 1' })
     prismaMock.owner.findFirst.mockResolvedValue({ id: 1, name: 'Rich' })
     prismaMock.store.create.mockResolvedValue({ locationId: 1, ownerId: 1, ...store })
-    await expect(storeService.createStoreWithNames({ location: 'Location 1', owner: 'Rich', ...store })).resolves.toEqual({ locationId: 1, ownerId: 1, ...store })
+    await expect(storeService.createStoreWithNames({
+      location: 'Location 1',
+      owner: 'Rich',
+      externalId: 2,
+      name: 'Test Store',
+      numberOfEmployees: 10,
+      establishedYear: 2010
+    })).resolves.toEqual({ locationId: 1, ownerId: 1, ...store })
+  })
+
+  it('should fail if the externalId exists in DB', async () => {
+    const store = {
+      id: 1,
+      externalId: 1,
+      name: 'Test Store',
+      numberOfEmployees: 10,
+      establishedYear: 2010,
+      disabled: false
+    }
+
+    prismaMock.store.findFirst.mockResolvedValue({ locationId: 1, ownerId: 1, ...store })
+    await expect(storeService.createStoreWithNames({
+      location: 'Location 1',
+      owner: 'Rich',
+      externalId: 1,
+      name: 'Test Store',
+      numberOfEmployees: 10,
+      establishedYear: 2010
+    })).rejects.toEqual(new Error('Is there a store with id 1'))
   })
 
   it('should fail if store does not have name', async () => {
