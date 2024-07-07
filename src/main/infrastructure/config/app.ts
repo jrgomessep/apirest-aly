@@ -1,12 +1,10 @@
-import express, { json, type NextFunction, type Request, type Response, Router, type Express } from 'express'
+import express, { type Express } from 'express'
+import setupMiddlewares from '@/main/infrastructure/config/middlewares'
+import setupRoutes from '@/main/infrastructure/config/routes'
 
 export const setupApp = async (): Promise<Express> => {
   const app = express()
-  app.use(json())
-  const router = Router()
-  app.use('/alyplus', router)
-  router.get('/', (req: Request, res: Response, next: NextFunction) => {
-    res.json({ msg: 'Hello World' })
-  })
+  setupMiddlewares(app)
+  setupRoutes(app)
   return app
 }
