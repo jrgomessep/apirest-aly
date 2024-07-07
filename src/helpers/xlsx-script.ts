@@ -2,6 +2,8 @@ import '../main/infrastructure/config/module-alias'
 import * as XLSX from 'xlsx'
 import * as path from 'path'
 import * as fs from 'fs'
+import { StoreService } from '@/application'
+import prisma from '@/main/infrastructure/prisma'
 
 const filePath = path.resolve('./xlsx/stores.xlsx')
 
@@ -16,6 +18,26 @@ const sheetNames = workbook.SheetNames
 
 sheetNames.forEach(async sheetName => {
   const worksheet = workbook.Sheets[sheetName]
-  const jsonData = XLSX.utils.sheet_to_json(worksheet)
-  console.log(`Dados da planilha "${sheetName}":`, jsonData)
+  const jsonData: Store[] = XLSX.utils.sheet_to_json(worksheet)
+  const storeService = new StoreService(prisma)
+  for (const store of jsonData) {
+    await storeService.createStoreWithNames({
+      externalId: store.StoreID,
+      name: store.StoreName,
+      numberOfEmployees: store.NumberOfEmployees,
+      establishedYear: store.EstablishedYear,
+      location: store.Location,
+      owner: store.Owner
+    })
+  }
+  console.log('Importação Concluída')
 })
+
+interface Store {
+  StoreID: number
+  StoreName: string
+  Location: string
+  Owner: string
+  EstablishedYear: number
+  NumberOfEmployees: number
+}
