@@ -1,13 +1,15 @@
 import { setupApp } from '@/infrastructure/express/config/app'
-
 import { type Express } from 'express'
 import request from 'supertest'
+import { prismaMock } from '@/mocks/prisma-mock'
+
+jest.mock('@prisma/client')
 
 let app: Express
 
 describe('Content Type Middleware', () => {
   beforeAll(async () => {
-    app = await setupApp()
+    app = await setupApp(prismaMock)
   })
 
   test('Should return default content type as json', async () => {

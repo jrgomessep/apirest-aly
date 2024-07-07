@@ -6,7 +6,7 @@ export class StoreService implements Store {
 
   async createStore (store: Store.CreateStore): Promise<Store.Result | Error> {
     if (store.name !== '') {
-      const createdStore = await this.prisma.store.create({
+      const createdStore = await this.prisma['store'].create({
         data: {
           externalId: store.externalId,
           name: store.name,

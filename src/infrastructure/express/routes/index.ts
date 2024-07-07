@@ -1,9 +1,9 @@
-import { type Express, type NextFunction, type Request, type Response, Router } from 'express'
+import { type Express, Router } from 'express'
+import locationRoutes from './location-routes'
+import { type PrismaClient } from '@prisma/client'
 
-export default (app: Express): void => {
+export default (app: Express, prisma: PrismaClient): void => {
   const router = Router()
   app.use('/alyplus', router)
-  router.get('/', (req: Request, res: Response, next: NextFunction) => {
-    res.json({ msg: 'Hello World' })
-  })
+  app.use(locationRoutes(router, prisma))
 }

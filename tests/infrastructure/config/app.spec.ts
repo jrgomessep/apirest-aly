@@ -1,17 +1,20 @@
 import { setupApp } from '@/infrastructure/express/config/app'
-import { type Express } from 'express'
-import request from 'supertest'
+import setupMiddlewares from '@/infrastructure/express/config/middlewares'
+import setupRoutes from '@/infrastructure/express/routes'
+import { prismaMock } from '@/mocks/prisma-mock'
 
-describe('Test the root path', () => {
-  let app: Express
+jest.mock('@/infrastructure/express/config/middlewares')
+jest.mock('@/infrastructure/express/routes')
+jest.mock('@prisma/client')
 
-  beforeAll(async () => {
-    app = await setupApp()
+describe('Test the setupApp', () => {
+  afterEach(() => {
+    jest.clearAllMocks()
   })
 
-  it('should respond with a JSON message', async () => {
-    const response = await request(app).get('/alyplus/')
-    expect(response.status).toBe(200)
-    expect(response.body).toEqual({ msg: 'Hello World' })
+  it('should call setupMiddlewares and setupRoutes', async () => {
+    await setupApp(prismaMock)
+    expect(setupMiddlewares).toHaveBeenCalled()
+    expect(setupRoutes).toHaveBeenCalled()
   })
 })
