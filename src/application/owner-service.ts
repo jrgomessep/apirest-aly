@@ -15,6 +15,13 @@ export class OwnerService implements Owner {
   }
 
   async updateOwnerName (owner: Owner.UpdateOwner): Promise<Owner.Result> {
+    if (owner.id === null || owner.id === undefined) {
+      return new Error('Owner must be have id!')
+    }
+
+    if (owner.name === '') {
+      return new Error('Owner must be have name!')
+    }
     return await this.prisma.owner.update({
       where: { id: owner.id },
       data: owner

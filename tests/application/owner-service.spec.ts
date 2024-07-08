@@ -23,6 +23,17 @@ describe('OwnerService', () => {
     })
   })
 
+  it('should fail if owner does not have name', async () => {
+    const owner = {
+      id: 1,
+      name: ''
+    }
+
+    await expect(ownerService.createOwner(owner)).resolves.toEqual(
+      new Error('Owner must be have name!')
+    )
+  })
+
   it('should update a owner name ', async () => {
     const owner = {
       id: 1,
@@ -37,13 +48,28 @@ describe('OwnerService', () => {
     })
   })
 
-  it('should fail if owner does not have name', async () => {
+  it('should update fail a owner doesn\'t have id', async () => {
+    const owner = {
+      id: null as any,
+      name: 'Rich Haines'
+    }
+
+    prismaMock.owner.update.mockResolvedValue(owner)
+
+    await expect(ownerService.updateOwnerName(owner)).resolves.toEqual(
+      new Error('Owner must be have id!')
+    )
+  })
+
+  it('should update fail a owner doesn\'t have name', async () => {
     const owner = {
       id: 1,
       name: ''
     }
 
-    await expect(ownerService.createOwner(owner)).resolves.toEqual(
+    prismaMock.owner.update.mockResolvedValue(owner)
+
+    await expect(ownerService.updateOwnerName(owner)).resolves.toEqual(
       new Error('Owner must be have name!')
     )
   })

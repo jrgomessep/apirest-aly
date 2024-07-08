@@ -28,7 +28,11 @@ export class OwnerController {
 
     try {
       const result = await this.ownerService.updateOwnerName(owner)
-      return res.status(200).json(result)
+      if (result instanceof Error) {
+        return res.status(400).json({ error: result.message })
+      } else {
+        return res.status(200).json(result)
+      }
     } catch (error) {
       return res.status(500).json({ error: 'Internal Server Error' })
     }

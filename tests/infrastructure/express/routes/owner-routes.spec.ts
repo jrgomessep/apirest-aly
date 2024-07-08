@@ -47,6 +47,28 @@ describe('Owner Routes', () => {
     expect(response.body).toEqual({ id: owner.id, name: owner.name })
   })
 
+  it('should return 400 if id is empty in update router', async () => {
+    const owner = { id: null, name: 'Updated Owner' }
+
+    const response = await request(app)
+      .put('/owners')
+      .send(owner)
+      .expect(400)
+
+    expect(response.body).toEqual({ error: 'Owner must be have id!' })
+  })
+
+  it('should return 400 if name is empty in update router', async () => {
+    const owner = { id: 1, name: '' }
+
+    const response = await request(app)
+      .put('/owners')
+      .send(owner)
+      .expect(400)
+
+    expect(response.body).toEqual({ error: 'Owner must be have name!' })
+  })
+
   it('should get all owners', async () => {
     const owners = [{ id: 1, name: 'Owner 1' }, { id: 2, name: 'Owner 2' }]
     prismaMock.owner.findMany.mockResolvedValue(owners)

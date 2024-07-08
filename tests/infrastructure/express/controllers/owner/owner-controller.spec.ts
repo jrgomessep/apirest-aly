@@ -62,6 +62,28 @@ describe('OwnerController', () => {
     expect(res.json).toHaveBeenCalledWith({ id: owner.id, name: owner.name })
   })
 
+  it('should return 400 if owner does not have id', async () => {
+    const owner = { id: null as any, name: 'Updated Owner' }
+    req.body = owner
+
+    ownerService.updateOwnerName.mockResolvedValue(new Error('Owner must be have id!'))
+    await ownerController.updateOwnerName(req as Request, res as Response)
+
+    expect(res.status).toHaveBeenCalledWith(400)
+    expect(res.json).toHaveBeenCalledWith({ error: 'Owner must be have id!' })
+  })
+
+  it('should return 400 if owner does not have name', async () => {
+    const owner = { id: 1 as any, name: '' }
+    req.body = owner
+
+    ownerService.updateOwnerName.mockResolvedValue(new Error('Owner must be have name!'))
+    await ownerController.updateOwnerName(req as Request, res as Response)
+
+    expect(res.status).toHaveBeenCalledWith(400)
+    expect(res.json).toHaveBeenCalledWith({ error: 'Owner must be have name!' })
+  })
+
   it('should return 500 when trying to update owner name if there is an error', async () => {
     const owner = { name: 'Update Owner' }
     req.body = owner
