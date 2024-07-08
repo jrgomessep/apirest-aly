@@ -1,4 +1,3 @@
-// tests/controllers/locationController.test.ts
 import { type Request, type Response } from 'express'
 import { type LocationService } from '@/application/location-service'
 import { LocationController } from '@/infrastructure/express/controllers'
