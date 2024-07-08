@@ -165,6 +165,20 @@ describe('StoreService', () => {
     await expect(storeService.updateStoreEmployers(store)).resolves.toEqual(store)
   })
 
+  it('should fail if store does not have employers', async () => {
+    const store = {
+      id: 1,
+      externalId: 1,
+      name: 'Store Name',
+      numberOfEmployees: null as any,
+      establishedYear: 2010,
+      locationId: 1,
+      ownerId: 1,
+      disabled: false
+    }
+    await expect(storeService.updateStoreEmployers(store)).rejects.toEqual(new Error('Store must have a number of employees!'))
+  })
+
   it('should update a store owner', async () => {
     const store = {
       id: 1,
@@ -178,6 +192,20 @@ describe('StoreService', () => {
     }
     prismaMock.store.update.mockResolvedValue(store)
     await expect(storeService.updateStoreOwner(store)).resolves.toEqual(store)
+  })
+
+  it('should fail if store does not have owner', async () => {
+    const store = {
+      id: 1,
+      externalId: 1,
+      name: 'Store Name',
+      numberOfEmployees: 11,
+      establishedYear: 2010,
+      locationId: 1,
+      ownerId: null as any,
+      disabled: false
+    }
+    await expect(storeService.updateStoreOwner(store)).rejects.toEqual(new Error('Store must have an owner!'))
   })
 
   it('should update a store location', async () => {
@@ -195,6 +223,20 @@ describe('StoreService', () => {
     await expect(storeService.updateStoreLocation(store)).resolves.toEqual(store)
   })
 
+  it('should fail if store does not have owner', async () => {
+    const store = {
+      id: 1,
+      externalId: 1,
+      name: 'Store Name',
+      numberOfEmployees: 11,
+      establishedYear: 2010,
+      locationId: null as any,
+      ownerId: 1,
+      disabled: false
+    }
+    await expect(storeService.updateStoreLocation(store)).rejects.toEqual(new Error('Store must have a location!'))
+  })
+
   it('should update externalId', async () => {
     const store = {
       id: 1,
@@ -208,6 +250,20 @@ describe('StoreService', () => {
     }
     prismaMock.store.update.mockResolvedValue(store)
     await expect(storeService.updateStoreExternalId(store)).resolves.toEqual(store)
+  })
+
+  it('should fail if store does not have owner', async () => {
+    const store = {
+      id: 1,
+      externalId: null as any,
+      name: 'Store Name',
+      numberOfEmployees: 11,
+      establishedYear: 2010,
+      locationId: 1,
+      ownerId: 1,
+      disabled: false
+    }
+    await expect(storeService.updateStoreExternalId(store)).rejects.toEqual(new Error('Store must have an externalId!'))
   })
 
   it('should get all stores with owner and location names', async () => {
@@ -293,6 +349,12 @@ describe('StoreService', () => {
       ownerName: 'Owner 1',
       locationName: 'Location 1'
     })
+  })
+
+  it('should get null value if store not exists', async () => {
+    prismaMock.store.findUnique.mockResolvedValue(null)
+
+    await expect(storeService.getStoreById({ id: 1 })).resolves.toBeNull()
   })
 
   it('should get a store by externalId', async () => {
