@@ -36,6 +36,28 @@ describe('Location Routes', () => {
     expect(response.body).toEqual({ id: location.id, name: location.name })
   })
 
+  it('should return 400 if id is empty in update router', async () => {
+    const location = { id: null, name: 'Updated Location' }
+
+    const response = await request(app)
+      .put('/locations')
+      .send(location)
+      .expect(400)
+
+    expect(response.body).toEqual({ error: 'Location must be have id!' })
+  })
+
+  it('should return 400 if name is empty in update router', async () => {
+    const location = { id: 1, name: '' }
+
+    const response = await request(app)
+      .put('/locations')
+      .send(location)
+      .expect(400)
+
+    expect(response.body).toEqual({ error: 'Location must be have name!' })
+  })
+
   it('should get all locations', async () => {
     const locations = [{ id: 1, name: 'Location 1' }, { id: 2, name: 'Location 2' }]
     prismaMock.location.findMany.mockResolvedValue(locations)

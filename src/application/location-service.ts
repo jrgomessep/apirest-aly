@@ -15,6 +15,14 @@ export class LocationService implements Location {
   }
 
   async updateLocationName (location: Location.UpdateLocation): Promise<Location.Result> {
+    if (location.id === null || location.id === undefined) {
+      return new Error('Location must be have id!')
+    }
+
+    if (location.name === '') {
+      return new Error('Location must be have name!')
+    }
+
     return await this.prisma.location.update({
       where: { id: location.id },
       data: location

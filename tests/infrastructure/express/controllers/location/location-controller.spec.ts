@@ -62,6 +62,28 @@ describe('LocationController', () => {
     expect(res.json).toHaveBeenCalledWith({ id: location.id, name: location.name })
   })
 
+  it('should return 400 if location does not have id', async () => {
+    const location = { id: null as any, name: 'Updated Location' }
+    req.body = location
+
+    locationService.updateLocationName.mockResolvedValue(new Error('Location must be have id!'))
+    await locationController.updateLocationName(req as Request, res as Response)
+
+    expect(res.status).toHaveBeenCalledWith(400)
+    expect(res.json).toHaveBeenCalledWith({ error: 'Location must be have id!' })
+  })
+
+  it('should return 400 if location does not have name', async () => {
+    const location = { id: 1 as any, name: '' }
+    req.body = location
+
+    locationService.updateLocationName.mockResolvedValue(new Error('Location must be have name!'))
+    await locationController.updateLocationName(req as Request, res as Response)
+
+    expect(res.status).toHaveBeenCalledWith(400)
+    expect(res.json).toHaveBeenCalledWith({ error: 'Location must be have name!' })
+  })
+
   it('should return 500 when trying to update location name if there is an error', async () => {
     const location = { name: 'Update Location' }
     req.body = location

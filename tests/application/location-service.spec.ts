@@ -23,6 +23,17 @@ describe('LocationService', () => {
     })
   })
 
+  it('should fail if location does not have name', async () => {
+    const location = {
+      id: 1,
+      name: ''
+    }
+
+    await expect(locationService.createLocation(location)).resolves.toEqual(
+      new Error('Location must be have name!')
+    )
+  })
+
   it('should update a location name ', async () => {
     const location = {
       id: 1,
@@ -37,13 +48,28 @@ describe('LocationService', () => {
     })
   })
 
-  it('should fail if location does not have name', async () => {
+  it('should update fail a location doesn\'t have id', async () => {
+    const location = {
+      id: null as any,
+      name: 'Location'
+    }
+
+    prismaMock.location.update.mockResolvedValue(location)
+
+    await expect(locationService.updateLocationName(location)).resolves.toEqual(
+      new Error('Location must be have id!')
+    )
+  })
+
+  it('should update fail a location doesn\'t have name', async () => {
     const location = {
       id: 1,
       name: ''
     }
 
-    await expect(locationService.createLocation(location)).resolves.toEqual(
+    prismaMock.location.update.mockResolvedValue(location)
+
+    await expect(locationService.updateLocationName(location)).resolves.toEqual(
       new Error('Location must be have name!')
     )
   })
