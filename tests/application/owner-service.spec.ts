@@ -75,4 +75,10 @@ describe('OwnerService', () => {
 
     await expect(ownerService.getOwnerById({ id: 1 })).resolves.toEqual(owner)
   })
+
+  it('shouldn\'t get an owner by ID', async () => {
+    prismaMock.owner.findUnique.mockResolvedValue(null)
+
+    await expect(ownerService.getOwnerById({ id: 1 })).resolves.toBeNull()
+  })
 })
