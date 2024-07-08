@@ -1,7 +1,10 @@
 /** @type {import('jest').Config} */
 const config = {
   collectCoverage: true,
-  collectCoverageFrom: ['<rootDir>/src/**.ts'],
+  collectCoverageFrom: [
+    '<rootDir>/src/**/*.ts',
+    '!<rootDir>/src/**/index.ts'
+  ],
   coverageDirectory: 'coverage',
   coverageProvider: 'babel',
   moduleNameMapper: {
@@ -10,7 +13,6 @@ const config = {
     '@/(.+)': '<rootDir>/src/$1'
   },
   roots: [
-    '<rootDir>/src',
     '<rootDir>/tests'
   ],
   transform: {
