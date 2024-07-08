@@ -1,6 +1,6 @@
 import { type LocationService } from '@/application'
-import { type LocationResultModel } from '@/domain/models'
-import { type HttpErrorResponse, type Location } from '@/domain/usecases'
+import { type LocationResultModel } from '@/domain/interfaces'
+import { type HttpErrorResponse, type Location } from '@/domain/models'
 import { type Request, type Response } from 'express'
 
 export class LocationController {

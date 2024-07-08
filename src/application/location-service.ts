@@ -1,4 +1,4 @@
-import { type Location } from '@/domain/usecases'
+import { type Location } from '@/domain/models'
 import { type PrismaClient } from '@prisma/client'
 
 export class LocationService implements Location {

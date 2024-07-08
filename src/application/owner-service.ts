@@ -1,4 +1,4 @@
-import { type Owner } from '@/domain/usecases'
+import { type Owner } from '@/domain/models'
 import { type PrismaClient } from '@prisma/client'
 
 export class OwnerService implements Owner {

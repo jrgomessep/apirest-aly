@@ -1,4 +1,4 @@
-import { type Store } from '@/domain/usecases'
+import { type Store } from '@/domain/models'
 import { type PrismaClient } from '@prisma/client'
 
 export class StoreService implements Store {
