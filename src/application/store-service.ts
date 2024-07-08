@@ -18,7 +18,7 @@ export class StoreService implements Store {
       })
       return createdStore
     } else {
-      throw new Error('Store must have a name!')
+      return new Error('Store must have a name!')
     }
   }
 
@@ -29,7 +29,7 @@ export class StoreService implements Store {
       })
 
       if (storeReturned !== null && storeReturned !== undefined) {
-        throw new Error(`Is there a store with id ${store.externalId}`)
+        return new Error(`Is there a store with id ${store.externalId}`)
       }
 
       let location = await this.prisma.location.findFirst({
@@ -64,68 +64,88 @@ export class StoreService implements Store {
       })
       return createdStore
     } else {
-      throw new Error('Store must have a name!')
+      return new Error('Store must have a name!')
     }
   }
 
   async updateStoreName (store: { id: number, name: string }): Promise<Store.Result | Error> {
-    if (store.name !== '') {
-      const updatedStore = await this.prisma.store.update({
-        where: { id: store.id },
-        data: { name: store.name }
-      })
-      return updatedStore
-    } else {
-      throw new Error('Store must have a name!')
+    if (store.id === null || store.id === undefined) {
+      return new Error('Store must have id!')
     }
+
+    if (store.name === '') {
+      return new Error('Store must have a name!')
+    }
+
+    const updatedStore = await this.prisma.store.update({
+      where: { id: store.id },
+      data: { name: store.name }
+    })
+    return updatedStore
   }
 
   async updateStoreEmployers (store: { id: number, numberOfEmployees: number }): Promise<Store.Result | Error> {
-    if (store.numberOfEmployees !== null) {
-      const updatedStore = await this.prisma.store.update({
-        where: { id: store.id },
-        data: { numberOfEmployees: store.numberOfEmployees }
-      })
-      return updatedStore
-    } else {
-      throw new Error('Store must have a number of employees!')
+    if (store.id === null || store.id === undefined) {
+      return new Error('Store must have id!')
     }
+
+    if (store.numberOfEmployees === null) {
+      return new Error('Store must have a number of employees!')
+    }
+
+    const updatedStore = await this.prisma.store.update({
+      where: { id: store.id },
+      data: { numberOfEmployees: store.numberOfEmployees }
+    })
+    return updatedStore
   }
 
   async updateStoreOwner (store: { id: number, ownerId: number }): Promise<Store.Result | Error> {
-    if (store.ownerId !== null) {
-      const updatedStore = await this.prisma.store.update({
-        where: { id: store.id },
-        data: { ownerId: store.ownerId }
-      })
-      return updatedStore
-    } else {
-      throw new Error('Store must have an owner!')
+    if (store.id === null || store.id === undefined) {
+      return new Error('Store must have id!')
     }
+
+    if (store.ownerId === null || store.ownerId === undefined) {
+      return new Error('Store must have an owner!')
+    }
+
+    const updatedStore = await this.prisma.store.update({
+      where: { id: store.id },
+      data: { ownerId: store.ownerId }
+    })
+    return updatedStore
   }
 
   async updateStoreLocation (store: { id: number, locationId: number }): Promise<Store.Result | Error> {
-    if (store.locationId !== null) {
-      const updatedStore = await this.prisma.store.update({
-        where: { id: store.id },
-        data: { locationId: store.locationId }
-      })
-      return updatedStore
-    } else {
-      throw new Error('Store must have a location!')
+    if (store.id === null || store.id === undefined) {
+      return new Error('Store must have id!')
     }
+
+    if (store.locationId === null || store.locationId === undefined) {
+      return new Error('Store must have a location!')
+    }
+
+    const updatedStore = await this.prisma.store.update({
+      where: { id: store.id },
+      data: { locationId: store.locationId }
+    })
+    return updatedStore
   }
 
   async updateStoreExternalId (store: { id: number, externalId: number }): Promise<Store.Result | Error> {
-    if (store.externalId !== null) {
-      const updatedStore = await this.prisma.store.update({
-        where: { id: store.id },
-        data: { externalId: store.externalId }
-      })
-      return updatedStore
-    } else {
-      throw new Error('Store must have an externalId!')
+    if (store.id === null || store.id === undefined) {
+      return new Error('Store must have id!')
     }
+
+    if (store.externalId === null || store.externalId === undefined) {
+      return new Error('Store must have an externalId!')
+    }
+
+    const updatedStore = await this.prisma.store.update({
+      where: { id: store.id },
+      data: { externalId: store.externalId }
+    })
+    return updatedStore
   }
 
   async getAllStores (): Promise<Store.StoreList> {

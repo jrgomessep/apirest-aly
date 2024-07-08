@@ -35,7 +35,7 @@ describe('StoreService', () => {
       disabled: false
     }
     prismaMock.store.create.mockResolvedValue(store)
-    await expect(storeService.createStore(store)).rejects.toEqual(new Error('Store must have a name!'))
+    await expect(storeService.createStore(store)).resolves.toEqual(new Error('Store must have a name!'))
   })
 
   it('should create a new store with names', async () => {
@@ -79,7 +79,7 @@ describe('StoreService', () => {
       name: 'Test Store',
       numberOfEmployees: 10,
       establishedYear: 2010
-    })).rejects.toEqual(new Error('Is there a store with id 1'))
+    })).resolves.toEqual(new Error('Is there a store with id 1'))
   })
 
   it('should fail if store does not have name', async () => {
@@ -95,7 +95,7 @@ describe('StoreService', () => {
     prismaMock.location.findFirst.mockResolvedValue({ id: 1, name: 'Location 1' })
     prismaMock.owner.findFirst.mockResolvedValue({ id: 1, name: 'Rich' })
     prismaMock.store.create.mockResolvedValue({ locationId: 1, ownerId: 1, ...store })
-    await expect(storeService.createStoreWithNames({ location: 'Location 1', owner: 'Rich', ...store })).rejects.toEqual(new Error('Store must have a name!'))
+    await expect(storeService.createStoreWithNames({ location: 'Location 1', owner: 'Rich', ...store })).resolves.toEqual(new Error('Store must have a name!'))
   })
 
   it('should create a new store with names when don\'t exists in DB ', async () => {
@@ -147,7 +147,22 @@ describe('StoreService', () => {
       disabled: false
     }
     prismaMock.store.update.mockResolvedValue(store)
-    await expect(storeService.updateStoreName(store)).rejects.toEqual(new Error('Store must have a name!'))
+    await expect(storeService.updateStoreName(store)).resolves.toEqual(new Error('Store must have a name!'))
+  })
+
+  it('should fail if store does not have id', async () => {
+    const store = {
+      id: null as any,
+      externalId: 1,
+      name: 'Store Name',
+      numberOfEmployees: 10,
+      establishedYear: 2010,
+      locationId: 1,
+      ownerId: 1,
+      disabled: false
+    }
+    prismaMock.store.update.mockResolvedValue(store)
+    await expect(storeService.updateStoreName(store)).resolves.toEqual(new Error('Store must have id!'))
   })
 
   it('should update a store employers', async () => {
@@ -165,7 +180,21 @@ describe('StoreService', () => {
     await expect(storeService.updateStoreEmployers(store)).resolves.toEqual(store)
   })
 
-  it('should fail if store does not have employers', async () => {
+  it('should fail if update store employers store does not have id', async () => {
+    const store = {
+      id: null as any,
+      externalId: 1,
+      name: 'Store Name',
+      numberOfEmployees: 10,
+      establishedYear: 2010,
+      locationId: 1,
+      ownerId: 1,
+      disabled: false
+    }
+    await expect(storeService.updateStoreEmployers(store)).resolves.toEqual(new Error('Store must have id!'))
+  })
+
+  it('should fail if update store employers does not have employers', async () => {
     const store = {
       id: 1,
       externalId: 1,
@@ -176,7 +205,7 @@ describe('StoreService', () => {
       ownerId: 1,
       disabled: false
     }
-    await expect(storeService.updateStoreEmployers(store)).rejects.toEqual(new Error('Store must have a number of employees!'))
+    await expect(storeService.updateStoreEmployers(store)).resolves.toEqual(new Error('Store must have a number of employees!'))
   })
 
   it('should update a store owner', async () => {
@@ -194,7 +223,21 @@ describe('StoreService', () => {
     await expect(storeService.updateStoreOwner(store)).resolves.toEqual(store)
   })
 
-  it('should fail if store does not have owner', async () => {
+  it('should fail if update store owner does not have id', async () => {
+    const store = {
+      id: null as any,
+      externalId: 1,
+      name: 'Store Name',
+      numberOfEmployees: 11,
+      establishedYear: 2010,
+      locationId: 1,
+      ownerId: 1,
+      disabled: false
+    }
+    await expect(storeService.updateStoreOwner(store)).resolves.toEqual(new Error('Store must have id!'))
+  })
+
+  it('should fail if update store owner does not have owner', async () => {
     const store = {
       id: 1,
       externalId: 1,
@@ -205,10 +248,10 @@ describe('StoreService', () => {
       ownerId: null as any,
       disabled: false
     }
-    await expect(storeService.updateStoreOwner(store)).rejects.toEqual(new Error('Store must have an owner!'))
+    await expect(storeService.updateStoreOwner(store)).resolves.toEqual(new Error('Store must have an owner!'))
   })
 
-  it('should update a store location', async () => {
+  it('should update a store locationId', async () => {
     const store = {
       id: 1,
       externalId: 1,
@@ -223,7 +266,21 @@ describe('StoreService', () => {
     await expect(storeService.updateStoreLocation(store)).resolves.toEqual(store)
   })
 
-  it('should fail if store does not have owner', async () => {
+  it('should fail if store does not have locationId', async () => {
+    const store = {
+      id: null as any,
+      externalId: 1,
+      name: 'Store Name',
+      numberOfEmployees: 11,
+      establishedYear: 2010,
+      locationId: 1,
+      ownerId: 1,
+      disabled: false
+    }
+    await expect(storeService.updateStoreLocation(store)).resolves.toEqual(new Error('Store must have id!'))
+  })
+
+  it('should fail if store does not have locationId', async () => {
     const store = {
       id: 1,
       externalId: 1,
@@ -234,7 +291,7 @@ describe('StoreService', () => {
       ownerId: 1,
       disabled: false
     }
-    await expect(storeService.updateStoreLocation(store)).rejects.toEqual(new Error('Store must have a location!'))
+    await expect(storeService.updateStoreLocation(store)).resolves.toEqual(new Error('Store must have a location!'))
   })
 
   it('should update externalId', async () => {
@@ -252,7 +309,21 @@ describe('StoreService', () => {
     await expect(storeService.updateStoreExternalId(store)).resolves.toEqual(store)
   })
 
-  it('should fail if store does not have owner', async () => {
+  it('should fail if update store externalId does not have id', async () => {
+    const store = {
+      id: null as any,
+      externalId: 1,
+      name: 'Store Name',
+      numberOfEmployees: 11,
+      establishedYear: 2010,
+      locationId: 1,
+      ownerId: 1,
+      disabled: false
+    }
+    await expect(storeService.updateStoreExternalId(store)).resolves.toEqual(new Error('Store must have id!'))
+  })
+
+  it('should fail if store does not have externalId', async () => {
     const store = {
       id: 1,
       externalId: null as any,
@@ -263,7 +334,7 @@ describe('StoreService', () => {
       ownerId: 1,
       disabled: false
     }
-    await expect(storeService.updateStoreExternalId(store)).rejects.toEqual(new Error('Store must have an externalId!'))
+    await expect(storeService.updateStoreExternalId(store)).resolves.toEqual(new Error('Store must have an externalId!'))
   })
 
   it('should get all stores with owner and location names', async () => {
