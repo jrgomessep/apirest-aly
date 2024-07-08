@@ -23,4 +23,48 @@ describe('Location Routes', () => {
 
     expect(response.body).toEqual(location)
   })
+
+  it('should update a location name', async () => {
+    const location = { id: 1, name: 'Updated Location' }
+    prismaMock.location.update.mockResolvedValue({ id: location.id, name: location.name })
+
+    const response = await request(app)
+      .put('/locations')
+      .send(location)
+      .expect(200)
+
+    expect(response.body).toEqual({ id: location.id, name: location.name })
+  })
+
+  it('should get all locations', async () => {
+    const locations = [{ id: 1, name: 'Location 1' }, { id: 2, name: 'Location 2' }]
+    prismaMock.location.findMany.mockResolvedValue(locations)
+
+    const response = await request(app)
+      .get('/locations')
+      .expect(200)
+
+    expect(response.body).toEqual(locations)
+  })
+
+  it('should get a location by id', async () => {
+    const location = { id: 1, name: 'Location 1' }
+    prismaMock.location.findUnique.mockResolvedValue(location)
+
+    const response = await request(app)
+      .get('/locations/1')
+      .expect(200)
+
+    expect(response.body).toEqual(location)
+  })
+
+  it('should return 404 if location not found', async () => {
+    prismaMock.location.findUnique.mockResolvedValue(null)
+
+    const response = await request(app)
+      .get('/locations/999')
+      .expect(404)
+
+    expect(response.body).toEqual({ error: 'Location not found' })
+  })
 })
