@@ -4,13 +4,13 @@ describe('MessageBuilder', () => {
   test('missingParam sem prefixo', () => {
     const builder = new MessageBuilder('Context')
     const result = builder.missingParam('parametro')
-    expect(result).toBe('Context must have parametro')
+    expect(result).toBe('Context must have parametro!')
   })
 
   test('missingParam com prefixo', () => {
     const builder = new MessageBuilder('Context')
     const result = builder.missingParam('parametro', 'Prefixo')
-    expect(result).toBe('Prefixo must have parametro')
+    expect(result).toBe('Prefixo must have parametro!')
   })
 
   test('notFound sem prefixo', () => {
