@@ -140,6 +140,6 @@ A documentação da API pode ser visualizada em:
 - typescript
 
 ## Controle de Qualidade de Código
-- Commit Verification with Husky: Utilizamos o Husky para garantir que todos os commits seguem os padrões definidos.
-- Pre-commit Hook with Linting: Utilizamos npx lint-staged para rodar o linting em arquivos staged antes de cada commit.
-- Pre-push Hook with Test Coverage: Utilizamos npm run test:coverage para garantir que todos os testes passem e a cobertura de testes é gerada antes de cada push.
+- Verificação de Commit com Husky: Foi utilizado o Husky para garantir que todos os commits seguem os padrões definidos.
+- Pre-commit Hook com Lint: Foi implementado um script chamado lint-staged para rodar o linting em arquivos staged antes de cada commit.
+- Hook Pré-Push com Testes de Cobertura: Foi implementado um script chamado test:coverage para garantir que todos os testes passem e a cobertura de testes é gerada antes de cada push.
