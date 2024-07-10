@@ -1,0 +1,388 @@
+components:
+  schemas:
+    Store:
+      type: object
+      required:
+        - name
+        - externalId
+        - numberOfEmployees
+        - establishedYear
+        - locationId
+        - ownerId
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: 'Fry Factory'
+        externalId:
+          type: integer
+          example: 1
+        numberOfEmployees:
+          type: integer
+          example: 10
+        establishedYear:
+          type: integer
+          example: 2020
+        locationId:
+          type: integer
+          example: 5
+        ownerId:
+          type: integer
+          example: 2
+    StoreWithNames:
+      type: object
+      required:
+        - name
+        - externalId
+        - numberOfEmployees
+        - establishedYear
+        - location
+        - owner
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: 'Fry Factory'
+        externalId:
+          type: integer
+          example: 1
+        numberOfEmployees:
+          type: integer
+          example: 10
+        establishedYear:
+          type: integer
+          example: 2020
+        location:
+          type: string
+          example: 'New York, NY'
+        owner:
+          type: string
+          example: 'Dana White'
+    StoreResponse:
+       type: object
+       properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: 'Fry Factory'
+        externalId:
+          type: integer
+          example: 1
+        numberOfEmployees:
+          type: integer
+          example: 10
+        establishedYear:
+          type: integer
+          example: 2020
+        locationId:
+          type: integer
+          example: 5
+        ownerId:
+          type: integer
+          example: 2
+        locationName:
+          type: string
+          example: 'Houston, TX'
+        ownerName:
+          type: string
+          example: 'Dana White'
+
+paths:
+  /stores:
+    get:
+      summary: Get all stores
+      description: 'This route is used to list all registered stores.'
+      tags: ['Stores']
+      responses:
+        '200':
+          description: A list of stores
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Store'
+    post:
+      summary: Create a new store
+      description: 'This route is used to register a store.'
+      tags: ['Stores']
+      requestBody:
+        description: Store object that needs to be added to the database
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Store'
+      responses:
+        '201':
+          description: Store created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Store'
+        '400':
+          description: Store must have a name!
+  /stores/names:
+    post:
+      summary: Create a new store with names
+      description: 'This route is used to register a store with owner and location names.'
+      tags: ['Stores']
+      requestBody:
+        description: Store object that needs to be added to the database
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StoreWithNames'
+      responses:
+        '201':
+          description: Store created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Store'
+        '400':
+          description: Store must have a name!
+  /stores/{id}:
+    get:
+      summary: Get store by ID
+      description: 'This route is used to get an store by id.'
+      tags: ['Stores']
+      parameters:
+        - name: id
+          in: path
+          description: 'ID used to filter.'
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: A single store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Store'
+    delete:
+      summary: Delete store by ID
+      description: 'This route is used to delete an store by id.'
+      tags: ['Stores']
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the store
+      responses:
+        '200':
+          description: Store deleted
+          content:
+            application/json:
+              example:
+                msg: 'Store deleted successfully!'
+  /stores/owner/{ownerId}:
+    get:
+      summary: Get stores by owner ID
+      description: 'This route is used to get an store by ownerId.'
+      tags: ['Stores']
+      parameters:
+        - name: ownerId
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Owner ID of the store
+      responses:
+        '200':
+          description: A list of stores
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Store'
+              example:
+                - id: 1
+                  name: 'Microsoft LTDA'
+                  numberOfEmployees: 200
+                  locationId: 5
+                  ownerId: 5
+                  establishedYear: 1990
+                  externalId: 10
+
+  /stores/external/{externalId}:
+    get:
+      summary: Get store by external ID
+      description: 'This route is used to get an store by externalId.'
+      tags: ['Stores']
+      parameters:
+        - name: externalId
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: External ID of the store
+      responses:
+        '200':
+          description: A single store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Store'
+  /stores/location/{locationId}:
+    get:
+      summary: Get stores by location ID
+      description: 'This route is used to get an store by locationId.'
+      tags: ['Stores']
+      parameters:
+        - name: locationId
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Location ID of the store
+      responses:
+        '200':
+          description: A list of stores
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Store'
+  /stores/owner:
+    put:
+      summary: Update store owner ID
+      description: 'This route is used to update the owner ID of store.'
+      tags: ['Stores']
+      requestBody:
+        description: Store object that needs to be updated
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                ownerId:
+                  type: integer
+      responses:
+        '200':
+          description: Store updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Store'
+        '400':
+          description: 'Store must have a id! or Store must have ownerId!'
+  /stores/location:
+    put:
+      summary: Update store location ID
+      description: 'This route is used to update the location ID of store.'
+      tags: ['Stores']
+      requestBody:
+        description: Store object that needs to be updated
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                locationId:
+                  type: integer
+      responses:
+        '200':
+          description: Store updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Store'
+        '400':
+          description: 'Store must have a id! or Store must have a locationId!'
+  /stores/externalId:
+    put:
+      summary: Update store external ID
+      description: 'This route is used to update the external ID of store.'
+      tags: ['Stores']
+      requestBody:
+        description: Store object that needs to be updated
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                externalId:
+                  type: integer
+      responses:
+        '200':
+          description: Store updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Store'
+        '400':
+          description: 'Store must have a id! or Store must have a externalId!'
+  /stores/employers:
+    put:
+      summary: Update store employees
+      description: 'This route is used to update the exmployees of store.'
+      tags: ['Stores']
+      requestBody:
+        description: Store object that needs to be updated
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                numberOfEmployees:
+                  type: integer
+      responses:
+        '200':
+          description: Store updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Store'
+        '400':
+          description: 'Store must have a id! or Store must have a numberOfEmployees!'
+  /stores/name:
+    put:
+      summary: Update store name
+      description: 'This route is used to update the name of store.'
+      tags: ['Stores']
+      requestBody:
+        description: Store object that needs to be updated
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                name:
+                  type: string
+      responses:
+        '200':
+          description: Store updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Store'
+        '400':
+          description: 'Store must have a id! or Store must have a numberOfEmployees!'

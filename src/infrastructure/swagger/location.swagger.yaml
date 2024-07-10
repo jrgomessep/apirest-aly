@@ -1,0 +1,117 @@
+components:
+  schemas:
+    Location:
+      type: object
+      required:
+        - name
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: "New York, NY"
+
+paths:
+  /locations:
+    get:
+      summary: "List all locations"
+      description: "This route is used to list all registered locations."
+      tags: ["Locations"]
+      responses:
+        "200":
+          description: "Successful operation"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Location'
+              example:
+                - id: 1
+                  name: "New York, NY"
+                - id: 2
+                  name: "Los Angeles, CA"
+                - id: 3
+                  name: "Chicago, IL"
+    post:
+      summary: "Register Location"
+      description: "This route is used to register locations."
+      tags: ["Locations"]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+              properties:
+                name:
+                  type: string
+      responses:
+        "201":
+          description: "Successful operation."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Location'
+              example:
+                id: 1
+                name: "New York, NY"
+        "400":
+          description: "Location must have a name!"
+    put:
+      summary: "Update Location"
+      description: "This route is used to update a location name."
+      tags: ["Locations"]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - id
+                - name
+              properties:
+                id:
+                  type: integer
+                name:
+                  type: string
+      responses:
+        "200":
+          description: "Successful operation."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Location'
+              example:
+                id: 1
+                name: "New York, NY"
+        "400":
+          description: "Location must have an id and a name!"
+  /locations/{id}:
+    get:
+      summary: "Get Location"
+      description: "This route is used to get a location by id."
+      tags: ["Locations"]
+      parameters:
+        - name: id
+          in: path
+          description: "ID used to filter."
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: "Successful operation."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Location'
+              example:
+                id: 1
+                name: "New York, NY"
+        "404":
+          description: "Location not found"

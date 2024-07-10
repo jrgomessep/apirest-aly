@@ -1,0 +1,117 @@
+components:
+  schemas:
+    Owner:
+      type: object
+      required:
+        - name
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: "Dana White"
+
+paths:
+  /owners:
+    get:
+      summary: "List all owners"
+      description: "This route is used to list all registered owners."
+      tags: ["Owners"]
+      responses:
+        "200":
+          description: "Successful operation"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Owner'
+              example:
+                - id: 1
+                  name: "Dana White"
+                - id: 2
+                  name: "Bob Smith"
+                - id: 3
+                  name: "Charlie Brown"
+    post:
+      summary: "Register Owner"
+      description: "This route is used to register owners."
+      tags: ["Owners"]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+              properties:
+                name:
+                  type: string
+      responses:
+        "201":
+          description: "Successful operation."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Owner'
+              example:
+                id: 1
+                name: "Dana White"
+        "400":
+          description: "Owner must have a name!"
+    put:
+      summary: "Update Owner"
+      description: "This route is used to update an owner's name."
+      tags: ["Owners"]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - id
+                - name
+              properties:
+                id:
+                  type: integer
+                name:
+                  type: string
+      responses:
+        "200":
+          description: "Successful operation."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Owner'
+              example:
+                id: 1
+                name: "Bob Smith"
+        "400":
+          description: "Owner must have an id and a name!"
+  /owners/{id}:
+    get:
+      summary: "Get Owner"
+      description: "This route is used to get an owner by id."
+      tags: ["Owners"]
+      parameters:
+        - name: id
+          in: path
+          description: "ID used to filter."
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: "Successful operation."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Owner'
+              example:
+                id: 1
+                name: "Dana White"
+        "404":
+          description: "Owner not found"
