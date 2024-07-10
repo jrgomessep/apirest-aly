@@ -1,8 +1,11 @@
 import { type Location } from '@/domain/models'
+import { MessageBuilder } from '@/shared/utils'
 import { type PrismaClient } from '@prisma/client'
 
-export class LocationService implements Location {
-  constructor (private readonly prisma: PrismaClient) {}
+export class LocationService extends MessageBuilder implements Location {
+  constructor (private readonly prisma: PrismaClient) {
+    super('Location')
+  }
 
   async createLocation (location: Location.CreateLocation): Promise<Location.Result | Error> {
     if (location.name !== '') {
@@ -10,17 +13,17 @@ export class LocationService implements Location {
         data: location
       })
     } else {
-      return new Error('Location must be have name!')
+      return new Error(this.missingParam('name'))
     }
   }
 
   async updateLocationName (location: Location.UpdateLocation): Promise<Location.Result> {
     if (location.id === null || location.id === undefined) {
-      return new Error('Location must be have id!')
+      return new Error(this.missingParam('id'))
     }
 
     if (location.name === '') {
-      return new Error('Location must be have name!')
+      return new Error(this.missingParam('name'))
     }
 
     return await this.prisma.location.update({

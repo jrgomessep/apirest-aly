@@ -60,7 +60,7 @@ paths:
                 id: 1
                 name: "New York, NY"
         "400":
-          description: "Location must have a name!"
+          description: "Location must have name!"
     put:
       summary: "Update Location"
       description: "This route is used to update a location name."

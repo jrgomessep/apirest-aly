@@ -1,12 +1,16 @@
 import { LocationService } from '@/application'
 import { prismaMock } from '@/mocks/prisma-mock'
+import { MessageBuilder } from '@/shared/utils'
 
 jest.mock('@prisma/client')
 
 describe('LocationService', () => {
   let locationService: LocationService
+  let msgBuilder: MessageBuilder
+
   beforeAll(() => {
     locationService = new LocationService(prismaMock)
+    msgBuilder = new MessageBuilder('Location')
   })
 
   it('should create new location ', async () => {
@@ -30,7 +34,7 @@ describe('LocationService', () => {
     }
 
     await expect(locationService.createLocation(location)).resolves.toEqual(
-      new Error('Location must be have name!')
+      new Error(msgBuilder.missingParam('name'))
     )
   })
 
@@ -57,7 +61,7 @@ describe('LocationService', () => {
     prismaMock.location.update.mockResolvedValue(location)
 
     await expect(locationService.updateLocationName(location)).resolves.toEqual(
-      new Error('Location must be have id!')
+      new Error(msgBuilder.missingParam('id'))
     )
   })
 
@@ -70,7 +74,7 @@ describe('LocationService', () => {
     prismaMock.location.update.mockResolvedValue(location)
 
     await expect(locationService.updateLocationName(location)).resolves.toEqual(
-      new Error('Location must be have name!')
+      new Error(msgBuilder.missingParam('name'))
     )
   })
 

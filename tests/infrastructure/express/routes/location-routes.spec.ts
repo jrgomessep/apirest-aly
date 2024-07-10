@@ -2,14 +2,17 @@ import request from 'supertest'
 import { type Express } from 'express'
 import { setupApp } from '@/infrastructure/express/config/app'
 import { prismaMock } from '@/mocks/prisma-mock'
+import { HttpStatus, MessageBuilder } from '@/shared/utils'
 
 jest.mock('@prisma/client')
 
 describe('Location Routes', () => {
   let app: Express
+  let msgBuilder: MessageBuilder
 
   beforeAll(async () => {
     app = await setupApp(prismaMock)
+    msgBuilder = new MessageBuilder('Location')
   })
 
   it('should create a location', async () => {
@@ -19,7 +22,7 @@ describe('Location Routes', () => {
     const response = await request(app)
       .post('/locations')
       .send(location)
-      .expect(201)
+      .expect(HttpStatus.CREATED)
 
     expect(response.body).toEqual(location)
   })
@@ -31,7 +34,7 @@ describe('Location Routes', () => {
     const response = await request(app)
       .put('/locations')
       .send(location)
-      .expect(200)
+      .expect(HttpStatus.OK)
 
     expect(response.body).toEqual({ id: location.id, name: location.name })
   })
@@ -42,9 +45,9 @@ describe('Location Routes', () => {
     const response = await request(app)
       .put('/locations')
       .send(location)
-      .expect(400)
+      .expect(HttpStatus.BAD_REQUEST)
 
-    expect(response.body).toEqual({ error: 'Location must be have id!' })
+    expect(response.body).toEqual({ error: msgBuilder.missingParam('id') })
   })
 
   it('should return 400 if name is empty in update router', async () => {
@@ -53,9 +56,9 @@ describe('Location Routes', () => {
     const response = await request(app)
       .put('/locations')
       .send(location)
-      .expect(400)
+      .expect(HttpStatus.BAD_REQUEST)
 
-    expect(response.body).toEqual({ error: 'Location must be have name!' })
+    expect(response.body).toEqual({ error: msgBuilder.missingParam('name') })
   })
 
   it('should get all locations', async () => {
@@ -64,7 +67,7 @@ describe('Location Routes', () => {
 
     const response = await request(app)
       .get('/locations')
-      .expect(200)
+      .expect(HttpStatus.OK)
 
     expect(response.body).toEqual(locations)
   })
@@ -75,7 +78,7 @@ describe('Location Routes', () => {
 
     const response = await request(app)
       .get('/locations/1')
-      .expect(200)
+      .expect(HttpStatus.OK)
 
     expect(response.body).toEqual(location)
   })
@@ -85,8 +88,8 @@ describe('Location Routes', () => {
 
     const response = await request(app)
       .get('/locations/999')
-      .expect(404)
+      .expect(HttpStatus.NOT_FOUND)
 
-    expect(response.body).toEqual({ error: 'Location not found' })
+    expect(response.body).toEqual({ error: msgBuilder.notFound() })
   })
 })
