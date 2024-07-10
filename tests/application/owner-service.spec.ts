@@ -1,12 +1,16 @@
 import { OwnerService } from '@/application'
 import { prismaMock } from '@/mocks/prisma-mock'
+import { MessageBuilder } from '@/shared/utils'
 
 jest.mock('@prisma/client')
 
 describe('OwnerService', () => {
   let ownerService: OwnerService
+  let msgBuilder: MessageBuilder
+
   beforeAll(() => {
     ownerService = new OwnerService(prismaMock)
+    msgBuilder = new MessageBuilder('Owner')
   })
 
   it('should create new user ', async () => {
@@ -30,7 +34,7 @@ describe('OwnerService', () => {
     }
 
     await expect(ownerService.createOwner(owner)).resolves.toEqual(
-      new Error('Owner must be have name!')
+      new Error(msgBuilder.missingParam('name'))
     )
   })
 
@@ -57,7 +61,7 @@ describe('OwnerService', () => {
     prismaMock.owner.update.mockResolvedValue(owner)
 
     await expect(ownerService.updateOwnerName(owner)).resolves.toEqual(
-      new Error('Owner must be have id!')
+      new Error(msgBuilder.missingParam('id'))
     )
   })
 
@@ -70,7 +74,7 @@ describe('OwnerService', () => {
     prismaMock.owner.update.mockResolvedValue(owner)
 
     await expect(ownerService.updateOwnerName(owner)).resolves.toEqual(
-      new Error('Owner must be have name!')
+      new Error(msgBuilder.missingParam('name'))
     )
   })
 

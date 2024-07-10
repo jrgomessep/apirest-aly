@@ -1,8 +1,11 @@
 import { type Owner } from '@/domain/models'
+import { MessageBuilder } from '@/shared/utils'
 import { type PrismaClient } from '@prisma/client'
 
-export class OwnerService implements Owner {
-  constructor (private readonly prisma: PrismaClient) {}
+export class OwnerService extends MessageBuilder implements Owner {
+  constructor (private readonly prisma: PrismaClient) {
+    super('Owner')
+  }
 
   async createOwner (owner: Owner.CreateOwner): Promise<Owner.Result | Error> {
     if (owner.name !== '') {
@@ -10,17 +13,17 @@ export class OwnerService implements Owner {
         data: owner
       })
     } else {
-      return new Error('Owner must be have name!')
+      return new Error(this.missingParam('name'))
     }
   }
 
   async updateOwnerName (owner: Owner.UpdateOwner): Promise<Owner.Result> {
     if (owner.id === null || owner.id === undefined) {
-      return new Error('Owner must be have id!')
+      return new Error(this.missingParam('id'))
     }
 
     if (owner.name === '') {
-      return new Error('Owner must be have name!')
+      return new Error(this.missingParam('name'))
     }
     return await this.prisma.owner.update({
       where: { id: owner.id },

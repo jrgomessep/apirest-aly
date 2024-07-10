@@ -2,6 +2,7 @@ import { type Request, type Response } from 'express'
 import { type OwnerService } from '@/application/owner-service'
 import { OwnerController } from '@/infrastructure/express/controllers'
 import { mock, type MockProxy } from 'jest-mock-extended'
+import { HttpStatus, MessageBuilder } from '@/shared/utils'
 
 jest.mock('@/application/owner-service')
 
@@ -10,12 +11,14 @@ describe('OwnerController', () => {
   let ownerController: OwnerController
   let req: Partial<Request>
   let res: Partial<Response>
+  let msgBuilder: MessageBuilder
 
   beforeEach(() => {
     ownerService = mock()
     ownerController = new OwnerController(ownerService)
     req = { body: {}, params: {} }
     res = { json: jest.fn(), status: jest.fn().mockReturnThis() }
+    msgBuilder = new MessageBuilder('Owner')
   })
 
   it('should create a owner', async () => {
@@ -25,7 +28,7 @@ describe('OwnerController', () => {
 
     await ownerController.createOwner(req as Request, res as Response)
 
-    expect(res.status).toHaveBeenCalledWith(201)
+    expect(res.status).toHaveBeenCalledWith(HttpStatus.CREATED)
     expect(res.json).toHaveBeenCalledWith({ id: 1, name: owner.name })
   })
 
@@ -33,11 +36,11 @@ describe('OwnerController', () => {
     const owner = { name: '' }
     req.body = owner
 
-    ownerService.createOwner.mockResolvedValue(new Error('Owner must be have name!'))
+    ownerService.createOwner.mockResolvedValue(new Error(msgBuilder.missingParam('name')))
     await ownerController.createOwner(req as Request, res as Response)
 
-    expect(res.status).toHaveBeenCalledWith(400)
-    expect(res.json).toHaveBeenCalledWith({ error: 'Owner must be have name!' })
+    expect(res.status).toHaveBeenCalledWith(HttpStatus.BAD_REQUEST)
+    expect(res.json).toHaveBeenCalledWith({ error: msgBuilder.missingParam('name') })
   })
 
   it('should return 500 when trying to Create owner if there is an error', async () => {
@@ -47,8 +50,8 @@ describe('OwnerController', () => {
     ownerService.createOwner.mockRejectedValue(null)
     await ownerController.createOwner(req as Request, res as Response)
 
-    expect(res.status).toHaveBeenCalledWith(500)
-    expect(res.json).toHaveBeenCalledWith({ error: 'Internal Server Error' })
+    expect(res.status).toHaveBeenCalledWith(HttpStatus.INTERNAL_SERVER_ERROR)
+    expect(res.json).toHaveBeenCalledWith({ error: msgBuilder.internalServerError() })
   })
 
   it('should update a owner name', async () => {
@@ -58,7 +61,7 @@ describe('OwnerController', () => {
 
     await ownerController.updateOwnerName(req as Request, res as Response)
 
-    expect(res.status).toHaveBeenCalledWith(200)
+    expect(res.status).toHaveBeenCalledWith(HttpStatus.OK)
     expect(res.json).toHaveBeenCalledWith({ id: owner.id, name: owner.name })
   })
 
@@ -66,22 +69,22 @@ describe('OwnerController', () => {
     const owner = { id: null as any, name: 'Updated Owner' }
     req.body = owner
 
-    ownerService.updateOwnerName.mockResolvedValue(new Error('Owner must be have id!'))
+    ownerService.updateOwnerName.mockResolvedValue(new Error(msgBuilder.missingParam('id')))
     await ownerController.updateOwnerName(req as Request, res as Response)
 
-    expect(res.status).toHaveBeenCalledWith(400)
-    expect(res.json).toHaveBeenCalledWith({ error: 'Owner must be have id!' })
+    expect(res.status).toHaveBeenCalledWith(HttpStatus.BAD_REQUEST)
+    expect(res.json).toHaveBeenCalledWith({ error: msgBuilder.missingParam('id') })
   })
 
   it('should return 400 if owner does not have name', async () => {
     const owner = { id: 1 as any, name: '' }
     req.body = owner
 
-    ownerService.updateOwnerName.mockResolvedValue(new Error('Owner must be have name!'))
+    ownerService.updateOwnerName.mockResolvedValue(new Error(msgBuilder.missingParam('name')))
     await ownerController.updateOwnerName(req as Request, res as Response)
 
-    expect(res.status).toHaveBeenCalledWith(400)
-    expect(res.json).toHaveBeenCalledWith({ error: 'Owner must be have name!' })
+    expect(res.status).toHaveBeenCalledWith(HttpStatus.BAD_REQUEST)
+    expect(res.json).toHaveBeenCalledWith({ error: msgBuilder.missingParam('name') })
   })
 
   it('should return 500 when trying to update owner name if there is an error', async () => {
@@ -91,8 +94,8 @@ describe('OwnerController', () => {
     ownerService.updateOwnerName.mockRejectedValue(null)
     await ownerController.updateOwnerName(req as Request, res as Response)
 
-    expect(res.status).toHaveBeenCalledWith(500)
-    expect(res.json).toHaveBeenCalledWith({ error: 'Internal Server Error' })
+    expect(res.status).toHaveBeenCalledWith(HttpStatus.INTERNAL_SERVER_ERROR)
+    expect(res.json).toHaveBeenCalledWith({ error: msgBuilder.internalServerError() })
   })
 
   it('should get all owners', async () => {
@@ -101,7 +104,7 @@ describe('OwnerController', () => {
 
     await ownerController.getAllOwners(req as Request, res as Response)
 
-    expect(res.status).toHaveBeenCalledWith(200)
+    expect(res.status).toHaveBeenCalledWith(HttpStatus.OK)
     expect(res.json).toHaveBeenCalledWith(owners)
   })
 
@@ -109,8 +112,8 @@ describe('OwnerController', () => {
     ownerService.getAllOwners.mockRejectedValue(null)
     await ownerController.getAllOwners(req as Request, res as Response)
 
-    expect(res.status).toHaveBeenCalledWith(500)
-    expect(res.json).toHaveBeenCalledWith({ error: 'Internal Server Error' })
+    expect(res.status).toHaveBeenCalledWith(HttpStatus.INTERNAL_SERVER_ERROR)
+    expect(res.json).toHaveBeenCalledWith({ error: msgBuilder.internalServerError() })
   })
 
   it('should get a owner by id', async () => {
@@ -120,7 +123,7 @@ describe('OwnerController', () => {
 
     await ownerController.getOwnerById(req as Request, res as Response)
 
-    expect(res.status).toHaveBeenCalledWith(200)
+    expect(res.status).toHaveBeenCalledWith(HttpStatus.OK)
     expect(res.json).toHaveBeenCalledWith(owner)
   })
 
@@ -130,8 +133,8 @@ describe('OwnerController', () => {
 
     await ownerController.getOwnerById(req as Request, res as Response)
 
-    expect(res.status).toHaveBeenCalledWith(404)
-    expect(res.json).toHaveBeenCalledWith({ error: 'Owner not found' })
+    expect(res.status).toHaveBeenCalledWith(HttpStatus.NOT_FOUND)
+    expect(res.json).toHaveBeenCalledWith({ error: msgBuilder.notFound() })
   })
 
   it('should return 500 when trying to get owner by id if there is an error', async () => {
@@ -141,7 +144,7 @@ describe('OwnerController', () => {
     ownerService.getOwnerById.mockRejectedValue(null)
     await ownerController.getOwnerById(req as Request, res as Response)
 
-    expect(res.status).toHaveBeenCalledWith(500)
-    expect(res.json).toHaveBeenCalledWith({ error: 'Internal Server Error' })
+    expect(res.status).toHaveBeenCalledWith(HttpStatus.INTERNAL_SERVER_ERROR)
+    expect(res.json).toHaveBeenCalledWith({ error: msgBuilder.internalServerError() })
   })
 })

@@ -2,10 +2,11 @@ import { type OwnerService } from '@/application'
 import { type OwnerResultModel } from '@/domain/interfaces'
 import { type HttpErrorResponse, type Owner } from '@/domain/models'
 import { type Request, type Response } from 'express'
+import { HttpStatus, MessageBuilder } from '@/shared/utils'
 
-export class OwnerController {
+export class OwnerController extends MessageBuilder {
   constructor (private readonly ownerService: OwnerService) {
-
+    super('Owner')
   }
 
   async createOwner (req: Request, res: Response): Promise<Response< OwnerResultModel | HttpErrorResponse >> {
@@ -14,12 +15,12 @@ export class OwnerController {
     try {
       const result = await this.ownerService.createOwner(owner)
       if (result instanceof Error) {
-        return res.status(400).json({ error: result.message })
+        return res.status(HttpStatus.BAD_REQUEST).json({ error: result.message })
       } else {
-        return res.status(201).json(result)
+        return res.status(HttpStatus.CREATED).json(result)
       }
     } catch (error) {
-      return res.status(500).json({ error: 'Internal Server Error' })
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: this.internalServerError() })
     }
   }
 
@@ -29,21 +30,21 @@ export class OwnerController {
     try {
       const result = await this.ownerService.updateOwnerName(owner)
       if (result instanceof Error) {
-        return res.status(400).json({ error: result.message })
+        return res.status(HttpStatus.BAD_REQUEST).json({ error: result.message })
       } else {
-        return res.status(200).json(result)
+        return res.status(HttpStatus.OK).json(result)
       }
     } catch (error) {
-      return res.status(500).json({ error: 'Internal Server Error' })
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: this.internalServerError() })
     }
   }
 
   async getAllOwners (req: Request, res: Response): Promise<Response< Owner.OwnerList | HttpErrorResponse >> {
     try {
       const owner = await this.ownerService.getAllOwners()
-      return res.status(200).json(owner)
+      return res.status(HttpStatus.OK).json(owner)
     } catch (error) {
-      return res.status(500).json({ error: 'Internal Server Error' })
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: this.internalServerError() })
     }
   }
 
@@ -53,12 +54,12 @@ export class OwnerController {
     try {
       const owner = await this.ownerService.getOwnerById({ id: parseInt(id, 10) })
       if (owner !== null && owner !== undefined) {
-        return res.status(200).json(owner)
+        return res.status(HttpStatus.OK).json(owner)
       } else {
-        return res.status(404).json({ error: 'Owner not found' })
+        return res.status(HttpStatus.NOT_FOUND).json({ error: this.notFound() })
       }
     } catch (error) {
-      return res.status(500).json({ error: 'Internal Server Error' })
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: this.internalServerError() })
     }
   }
 }

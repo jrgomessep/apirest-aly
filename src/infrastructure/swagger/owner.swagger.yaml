@@ -60,7 +60,7 @@ paths:
                 id: 1
                 name: "Dana White"
         "400":
-          description: "Owner must have a name!"
+          description: "Owner must have name!"
     put:
       summary: "Update Owner"
       description: "This route is used to update an owner's name."
