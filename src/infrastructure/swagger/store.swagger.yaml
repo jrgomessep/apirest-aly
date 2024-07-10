@@ -127,7 +127,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Store'
         '400':
-          description: Store must have a name!
+          description: Store must have name!
   /stores/names:
     post:
       summary: Create a new store with names
@@ -148,7 +148,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Store'
         '400':
-          description: Store must have a name!
+          description: Store must have name!
   /stores/{id}:
     get:
       summary: Get store by ID
@@ -281,7 +281,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Store'
         '400':
-          description: 'Store must have a id! or Store must have ownerId!'
+          description: 'Store must have id! or Store must have ownerId!'
   /stores/location:
     put:
       summary: Update store location ID
@@ -307,7 +307,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Store'
         '400':
-          description: 'Store must have a id! or Store must have a locationId!'
+          description: 'Store must have id! or Store must have locationId!'
   /stores/externalId:
     put:
       summary: Update store external ID
@@ -333,7 +333,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Store'
         '400':
-          description: 'Store must have a id! or Store must have a externalId!'
+          description: 'Store must have id! or Store must have externalId!'
   /stores/employers:
     put:
       summary: Update store employees
@@ -359,7 +359,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Store'
         '400':
-          description: 'Store must have a id! or Store must have a numberOfEmployees!'
+          description: 'Store must have id! or Store must have numberOfEmployees!'
   /stores/name:
     put:
       summary: Update store name
@@ -385,4 +385,4 @@ paths:
               schema:
                 $ref: '#/components/schemas/Store'
         '400':
-          description: 'Store must have a id! or Store must have a numberOfEmployees!'
+          description: 'Store must have id! or Store must have numberOfEmployees!'

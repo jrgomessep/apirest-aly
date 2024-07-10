@@ -1,8 +1,11 @@
 import { type Store } from '@/domain/models'
+import { MessageBuilder } from '@/shared/utils'
 import { type PrismaClient } from '@prisma/client'
 
-export class StoreService implements Store {
-  constructor (private readonly prisma: PrismaClient) {}
+export class StoreService extends MessageBuilder implements Store {
+  constructor (private readonly prisma: PrismaClient) {
+    super('Store')
+  }
 
   async createStore (store: Store.CreateStore): Promise<Store.Result | Error> {
     if (store.name !== '') {
@@ -18,7 +21,7 @@ export class StoreService implements Store {
       })
       return createdStore
     } else {
-      return new Error('Store must have a name!')
+      return new Error(this.missingParam('name'))
     }
   }
 
@@ -64,17 +67,17 @@ export class StoreService implements Store {
       })
       return createdStore
     } else {
-      return new Error('Store must have a name!')
+      return new Error(this.missingParam('name'))
     }
   }
 
   async updateStoreName (store: { id: number, name: string }): Promise<Store.Result | Error> {
     if (store.id === null || store.id === undefined) {
-      return new Error('Store must have id!')
+      return new Error(this.missingParam('id'))
     }
 
     if (store.name === '') {
-      return new Error('Store must have a name!')
+      return new Error(this.missingParam('name'))
     }
 
     const updatedStore = await this.prisma.store.update({
@@ -86,11 +89,11 @@ export class StoreService implements Store {
 
   async updateStoreEmployers (store: { id: number, numberOfEmployees: number }): Promise<Store.Result | Error> {
     if (store.id === null || store.id === undefined) {
-      return new Error('Store must have id!')
+      return new Error(this.missingParam('id'))
     }
 
     if (store.numberOfEmployees === null) {
-      return new Error('Store must have a number of employees!')
+      return new Error(this.missingParam('number of employees'))
     }
 
     const updatedStore = await this.prisma.store.update({
@@ -102,11 +105,11 @@ export class StoreService implements Store {
 
   async updateStoreOwner (store: { id: number, ownerId: number }): Promise<Store.Result | Error> {
     if (store.id === null || store.id === undefined) {
-      return new Error('Store must have id!')
+      return new Error(this.missingParam('id'))
     }
 
     if (store.ownerId === null || store.ownerId === undefined) {
-      return new Error('Store must have an owner!')
+      return new Error(this.missingParam('an owner'))
     }
 
     const updatedStore = await this.prisma.store.update({
@@ -118,11 +121,11 @@ export class StoreService implements Store {
 
   async updateStoreLocation (store: { id: number, locationId: number }): Promise<Store.Result | Error> {
     if (store.id === null || store.id === undefined) {
-      return new Error('Store must have id!')
+      return new Error(this.missingParam('id'))
     }
 
     if (store.locationId === null || store.locationId === undefined) {
-      return new Error('Store must have a location!')
+      return new Error(this.missingParam('location'))
     }
 
     const updatedStore = await this.prisma.store.update({
@@ -134,11 +137,11 @@ export class StoreService implements Store {
 
   async updateStoreExternalId (store: { id: number, externalId: number }): Promise<Store.Result | Error> {
     if (store.id === null || store.id === undefined) {
-      return new Error('Store must have id!')
+      return new Error(this.missingParam('id'))
     }
 
     if (store.externalId === null || store.externalId === undefined) {
-      return new Error('Store must have an externalId!')
+      return new Error(this.missingParam('an externalId'))
     }
 
     const updatedStore = await this.prisma.store.update({

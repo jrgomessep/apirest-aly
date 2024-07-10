@@ -2,6 +2,7 @@ import { type Request, type Response } from 'express'
 import { type StoreService } from '@/application/store-service'
 import { StoreController } from '@/infrastructure/express/controllers'
 import { mock, type MockProxy } from 'jest-mock-extended'
+import { HttpStatus, MessageBuilder } from '@/shared/utils'
 
 jest.mock('@/application/store-service')
 
@@ -10,12 +11,14 @@ describe('StoreController', () => {
   let storeController: StoreController
   let req: Partial<Request>
   let res: Partial<Response>
+  let msgBuilder: MessageBuilder
 
   beforeEach(() => {
     storeService = mock()
     storeController = new StoreController(storeService)
     req = { body: {}, params: {} }
     res = { json: jest.fn(), status: jest.fn().mockReturnThis() }
+    msgBuilder = new MessageBuilder('Store')
   })
 
   it('should create a store', async () => {
@@ -26,7 +29,7 @@ describe('StoreController', () => {
 
     await storeController.createStore(req as Request, res as Response)
 
-    expect(res.status).toHaveBeenCalledWith(201)
+    expect(res.status).toHaveBeenCalledWith(HttpStatus.CREATED)
     expect(res.json).toHaveBeenCalledWith(storeResponse)
   })
 
@@ -34,11 +37,11 @@ describe('StoreController', () => {
     const store = { name: '' }
     req.body = store
 
-    storeService.createStore.mockResolvedValue(new Error('Store must have a name!'))
+    storeService.createStore.mockResolvedValue(new Error(msgBuilder.missingParam('name')))
     await storeController.createStore(req as Request, res as Response)
 
-    expect(res.status).toHaveBeenCalledWith(400)
-    expect(res.json).toHaveBeenCalledWith({ error: 'Store must have a name!' })
+    expect(res.status).toHaveBeenCalledWith(HttpStatus.BAD_REQUEST)
+    expect(res.json).toHaveBeenCalledWith({ error: msgBuilder.missingParam('name') })
   })
 
   it('should return 500 when trying to create a store if there is an error', async () => {
@@ -48,8 +51,8 @@ describe('StoreController', () => {
     storeService.createStore.mockRejectedValue(null)
     await storeController.createStore(req as Request, res as Response)
 
-    expect(res.status).toHaveBeenCalledWith(500)
-    expect(res.json).toHaveBeenCalledWith({ error: 'Internal Server Error' })
+    expect(res.status).toHaveBeenCalledWith(HttpStatus.INTERNAL_SERVER_ERROR)
+    expect(res.json).toHaveBeenCalledWith({ error: msgBuilder.internalServerError() })
   })
 
   it('should create a store with names', async () => {
@@ -60,7 +63,7 @@ describe('StoreController', () => {
 
     await storeController.createStoreWithNames(req as Request, res as Response)
 
-    expect(res.status).toHaveBeenCalledWith(201)
+    expect(res.status).toHaveBeenCalledWith(HttpStatus.CREATED)
     expect(res.json).toHaveBeenCalledWith(storeResponse)
   })
 
@@ -68,11 +71,11 @@ describe('StoreController', () => {
     const store = { name: '' }
     req.body = store
 
-    storeService.createStoreWithNames.mockResolvedValue(new Error('Store must have a name!'))
+    storeService.createStoreWithNames.mockResolvedValue(new Error(msgBuilder.missingParam('name')))
     await storeController.createStoreWithNames(req as Request, res as Response)
 
-    expect(res.status).toHaveBeenCalledWith(400)
-    expect(res.json).toHaveBeenCalledWith({ error: 'Store must have a name!' })
+    expect(res.status).toHaveBeenCalledWith(HttpStatus.BAD_REQUEST)
+    expect(res.json).toHaveBeenCalledWith({ error: msgBuilder.missingParam('name') })
   })
 
   it('should return 500 when trying to create a store with names if there is an error', async () => {
@@ -82,8 +85,8 @@ describe('StoreController', () => {
     storeService.createStoreWithNames.mockRejectedValue(null)
     await storeController.createStoreWithNames(req as Request, res as Response)
 
-    expect(res.status).toHaveBeenCalledWith(500)
-    expect(res.json).toHaveBeenCalledWith({ error: 'Internal Server Error' })
+    expect(res.status).toHaveBeenCalledWith(HttpStatus.INTERNAL_SERVER_ERROR)
+    expect(res.json).toHaveBeenCalledWith({ error: msgBuilder.internalServerError() })
   })
 
   it('should update a store name', async () => {
@@ -94,7 +97,7 @@ describe('StoreController', () => {
 
     await storeController.updateStoreName(req as Request, res as Response)
 
-    expect(res.status).toHaveBeenCalledWith(200)
+    expect(res.status).toHaveBeenCalledWith(HttpStatus.OK)
     expect(res.json).toHaveBeenCalledWith(storeResponse)
   })
 
@@ -102,11 +105,11 @@ describe('StoreController', () => {
     const store = { name: '' }
     req.body = store
 
-    storeService.updateStoreName.mockResolvedValue(new Error('Store must have a name!'))
+    storeService.updateStoreName.mockResolvedValue(new Error(msgBuilder.missingParam('name')))
     await storeController.updateStoreName(req as Request, res as Response)
 
-    expect(res.status).toHaveBeenCalledWith(400)
-    expect(res.json).toHaveBeenCalledWith({ error: 'Store must have a name!' })
+    expect(res.status).toHaveBeenCalledWith(HttpStatus.BAD_REQUEST)
+    expect(res.json).toHaveBeenCalledWith({ error: msgBuilder.missingParam('name') })
   })
 
   it('should return 500 when trying to update store name if there is an error', async () => {
@@ -116,8 +119,8 @@ describe('StoreController', () => {
     storeService.updateStoreName.mockRejectedValue(null)
     await storeController.updateStoreName(req as Request, res as Response)
 
-    expect(res.status).toHaveBeenCalledWith(500)
-    expect(res.json).toHaveBeenCalledWith({ error: 'Internal Server Error' })
+    expect(res.status).toHaveBeenCalledWith(HttpStatus.INTERNAL_SERVER_ERROR)
+    expect(res.json).toHaveBeenCalledWith({ error: msgBuilder.internalServerError() })
   })
 
   it('should update a store employers', async () => {
@@ -128,7 +131,7 @@ describe('StoreController', () => {
 
     await storeController.updateStoreEmployers(req as Request, res as Response)
 
-    expect(res.status).toHaveBeenCalledWith(200)
+    expect(res.status).toHaveBeenCalledWith(HttpStatus.OK)
     expect(res.json).toHaveBeenCalledWith(storeResponse)
   })
 
@@ -136,11 +139,11 @@ describe('StoreController', () => {
     const store = { numberOfEmployees: null }
     req.body = store
 
-    storeService.updateStoreEmployers.mockResolvedValue(new Error('Store must have a number of employees!!'))
+    storeService.updateStoreEmployers.mockResolvedValue(new Error(msgBuilder.missingParam('number of employees')))
     await storeController.updateStoreEmployers(req as Request, res as Response)
 
-    expect(res.status).toHaveBeenCalledWith(400)
-    expect(res.json).toHaveBeenCalledWith({ error: 'Store must have a number of employees!!' })
+    expect(res.status).toHaveBeenCalledWith(HttpStatus.BAD_REQUEST)
+    expect(res.json).toHaveBeenCalledWith({ error: msgBuilder.missingParam('number of employees') })
   })
 
   it('should return 500 when trying to update store employers if there is an error', async () => {
@@ -150,8 +153,8 @@ describe('StoreController', () => {
     storeService.updateStoreEmployers.mockRejectedValue(null)
     await storeController.updateStoreEmployers(req as Request, res as Response)
 
-    expect(res.status).toHaveBeenCalledWith(500)
-    expect(res.json).toHaveBeenCalledWith({ error: 'Internal Server Error' })
+    expect(res.status).toHaveBeenCalledWith(HttpStatus.INTERNAL_SERVER_ERROR)
+    expect(res.json).toHaveBeenCalledWith({ error: msgBuilder.internalServerError() })
   })
 
   it('should update a store owner', async () => {
@@ -162,7 +165,7 @@ describe('StoreController', () => {
 
     await storeController.updateStoreOwner(req as Request, res as Response)
 
-    expect(res.status).toHaveBeenCalledWith(200)
+    expect(res.status).toHaveBeenCalledWith(HttpStatus.OK)
     expect(res.json).toHaveBeenCalledWith(storeResponse)
   })
 
@@ -170,11 +173,11 @@ describe('StoreController', () => {
     const store = { ownerId: null }
     req.body = store
 
-    storeService.updateStoreOwner.mockResolvedValue(new Error('Store must have an owner!'))
+    storeService.updateStoreOwner.mockResolvedValue(new Error(msgBuilder.missingParam('an owner')))
     await storeController.updateStoreOwner(req as Request, res as Response)
 
-    expect(res.status).toHaveBeenCalledWith(400)
-    expect(res.json).toHaveBeenCalledWith({ error: 'Store must have an owner!' })
+    expect(res.status).toHaveBeenCalledWith(HttpStatus.BAD_REQUEST)
+    expect(res.json).toHaveBeenCalledWith({ error: msgBuilder.missingParam('an owner') })
   })
 
   it('should return 500 when trying to update store owner if there is an error', async () => {
@@ -184,8 +187,8 @@ describe('StoreController', () => {
     storeService.updateStoreOwner.mockRejectedValue(null)
     await storeController.updateStoreOwner(req as Request, res as Response)
 
-    expect(res.status).toHaveBeenCalledWith(500)
-    expect(res.json).toHaveBeenCalledWith({ error: 'Internal Server Error' })
+    expect(res.status).toHaveBeenCalledWith(HttpStatus.INTERNAL_SERVER_ERROR)
+    expect(res.json).toHaveBeenCalledWith({ error: msgBuilder.internalServerError() })
   })
 
   it('should update a store location', async () => {
@@ -196,7 +199,7 @@ describe('StoreController', () => {
 
     await storeController.updateStoreLocation(req as Request, res as Response)
 
-    expect(res.status).toHaveBeenCalledWith(200)
+    expect(res.status).toHaveBeenCalledWith(HttpStatus.OK)
     expect(res.json).toHaveBeenCalledWith(storeResponse)
   })
 
@@ -204,11 +207,11 @@ describe('StoreController', () => {
     const store = { locationId: null }
     req.body = store
 
-    storeService.updateStoreLocation.mockResolvedValue(new Error('Store must have a location!'))
+    storeService.updateStoreLocation.mockResolvedValue(new Error(msgBuilder.missingParam('location')))
     await storeController.updateStoreLocation(req as Request, res as Response)
 
-    expect(res.status).toHaveBeenCalledWith(400)
-    expect(res.json).toHaveBeenCalledWith({ error: 'Store must have a location!' })
+    expect(res.status).toHaveBeenCalledWith(HttpStatus.BAD_REQUEST)
+    expect(res.json).toHaveBeenCalledWith({ error: msgBuilder.missingParam('location') })
   })
 
   it('should return 500 when trying to update store owner if there is an error', async () => {
@@ -218,8 +221,8 @@ describe('StoreController', () => {
     storeService.updateStoreLocation.mockRejectedValue(null)
     await storeController.updateStoreLocation(req as Request, res as Response)
 
-    expect(res.status).toHaveBeenCalledWith(500)
-    expect(res.json).toHaveBeenCalledWith({ error: 'Internal Server Error' })
+    expect(res.status).toHaveBeenCalledWith(HttpStatus.INTERNAL_SERVER_ERROR)
+    expect(res.json).toHaveBeenCalledWith({ error: msgBuilder.internalServerError() })
   })
 
   it('should update a store externalId', async () => {
@@ -230,7 +233,7 @@ describe('StoreController', () => {
 
     await storeController.updateStoreExternalId(req as Request, res as Response)
 
-    expect(res.status).toHaveBeenCalledWith(200)
+    expect(res.status).toHaveBeenCalledWith(HttpStatus.OK)
     expect(res.json).toHaveBeenCalledWith(storeResponse)
   })
 
@@ -238,11 +241,11 @@ describe('StoreController', () => {
     const store = { externalId: null }
     req.body = store
 
-    storeService.updateStoreExternalId.mockResolvedValue(new Error('Store must have an externalId!'))
+    storeService.updateStoreExternalId.mockResolvedValue(new Error(msgBuilder.missingParam('an externalId')))
     await storeController.updateStoreExternalId(req as Request, res as Response)
 
-    expect(res.status).toHaveBeenCalledWith(400)
-    expect(res.json).toHaveBeenCalledWith({ error: 'Store must have an externalId!' })
+    expect(res.status).toHaveBeenCalledWith(HttpStatus.BAD_REQUEST)
+    expect(res.json).toHaveBeenCalledWith({ error: msgBuilder.missingParam('an externalId') })
   })
 
   it('should return 500 when trying to update store owner if there is an error', async () => {
@@ -252,8 +255,8 @@ describe('StoreController', () => {
     storeService.updateStoreExternalId.mockRejectedValue(null)
     await storeController.updateStoreExternalId(req as Request, res as Response)
 
-    expect(res.status).toHaveBeenCalledWith(500)
-    expect(res.json).toHaveBeenCalledWith({ error: 'Internal Server Error' })
+    expect(res.status).toHaveBeenCalledWith(HttpStatus.INTERNAL_SERVER_ERROR)
+    expect(res.json).toHaveBeenCalledWith({ error: msgBuilder.internalServerError() })
   })
 
   it('should get all stores', async () => {
@@ -285,7 +288,7 @@ describe('StoreController', () => {
 
     await storeController.getAllStores(req as Request, res as Response)
 
-    expect(res.status).toHaveBeenCalledWith(200)
+    expect(res.status).toHaveBeenCalledWith(HttpStatus.OK)
     expect(res.json).toHaveBeenCalledWith(storeResponse)
   })
 
@@ -293,8 +296,8 @@ describe('StoreController', () => {
     storeService.getAllStores.mockRejectedValue(null)
     await storeController.getAllStores(req as Request, res as Response)
 
-    expect(res.status).toHaveBeenCalledWith(500)
-    expect(res.json).toHaveBeenCalledWith({ error: 'Internal Server Error' })
+    expect(res.status).toHaveBeenCalledWith(HttpStatus.INTERNAL_SERVER_ERROR)
+    expect(res.json).toHaveBeenCalledWith({ error: msgBuilder.internalServerError() })
   })
 
   it('should get a store by id', async () => {
@@ -304,7 +307,7 @@ describe('StoreController', () => {
 
     await storeController.getStoreById(req as Request, res as Response)
 
-    expect(res.status).toHaveBeenCalledWith(200)
+    expect(res.status).toHaveBeenCalledWith(HttpStatus.OK)
     expect(res.json).toHaveBeenCalledWith(store)
   })
 
@@ -314,8 +317,8 @@ describe('StoreController', () => {
 
     await storeController.getStoreById(req as Request, res as Response)
 
-    expect(res.status).toHaveBeenCalledWith(404)
-    expect(res.json).toHaveBeenCalledWith({ error: 'Store not found' })
+    expect(res.status).toHaveBeenCalledWith(HttpStatus.NOT_FOUND)
+    expect(res.json).toHaveBeenCalledWith({ error: msgBuilder.notFound() })
   })
 
   it('should return 500 when trying to get store by id if there is an error', async () => {
@@ -324,8 +327,8 @@ describe('StoreController', () => {
     storeService.getStoreById.mockRejectedValue(null)
     await storeController.getStoreById(req as Request, res as Response)
 
-    expect(res.status).toHaveBeenCalledWith(500)
-    expect(res.json).toHaveBeenCalledWith({ error: 'Internal Server Error' })
+    expect(res.status).toHaveBeenCalledWith(HttpStatus.INTERNAL_SERVER_ERROR)
+    expect(res.json).toHaveBeenCalledWith({ error: msgBuilder.internalServerError() })
   })
 
   it('should get a store by externalId', async () => {
@@ -335,7 +338,7 @@ describe('StoreController', () => {
 
     await storeController.getStoresByExternalId(req as Request, res as Response)
 
-    expect(res.status).toHaveBeenCalledWith(200)
+    expect(res.status).toHaveBeenCalledWith(HttpStatus.OK)
     expect(res.json).toHaveBeenCalledWith(store)
   })
 
@@ -345,8 +348,8 @@ describe('StoreController', () => {
     storeService.getStoresByExternalId.mockRejectedValue(null)
     await storeController.getStoresByExternalId(req as Request, res as Response)
 
-    expect(res.status).toHaveBeenCalledWith(500)
-    expect(res.json).toHaveBeenCalledWith({ error: 'Internal Server Error' })
+    expect(res.status).toHaveBeenCalledWith(HttpStatus.INTERNAL_SERVER_ERROR)
+    expect(res.json).toHaveBeenCalledWith({ error: msgBuilder.internalServerError() })
   })
 
   it('should get a store by ownerId', async () => {
@@ -356,7 +359,7 @@ describe('StoreController', () => {
 
     await storeController.getStoresByOwnerId(req as Request, res as Response)
 
-    expect(res.status).toHaveBeenCalledWith(200)
+    expect(res.status).toHaveBeenCalledWith(HttpStatus.OK)
     expect(res.json).toHaveBeenCalledWith(store)
   })
 
@@ -366,8 +369,8 @@ describe('StoreController', () => {
     storeService.getStoresByOwnerId.mockRejectedValue(null)
     await storeController.getStoresByOwnerId(req as Request, res as Response)
 
-    expect(res.status).toHaveBeenCalledWith(500)
-    expect(res.json).toHaveBeenCalledWith({ error: 'Internal Server Error' })
+    expect(res.status).toHaveBeenCalledWith(HttpStatus.INTERNAL_SERVER_ERROR)
+    expect(res.json).toHaveBeenCalledWith({ error: msgBuilder.internalServerError() })
   })
 
   it('should get a store by locationId', async () => {
@@ -377,7 +380,7 @@ describe('StoreController', () => {
 
     await storeController.getStoresByLocationId(req as Request, res as Response)
 
-    expect(res.status).toHaveBeenCalledWith(200)
+    expect(res.status).toHaveBeenCalledWith(HttpStatus.OK)
     expect(res.json).toHaveBeenCalledWith(store)
   })
 
@@ -387,8 +390,8 @@ describe('StoreController', () => {
     storeService.getStoresByLocationId.mockRejectedValue(null)
     await storeController.getStoresByLocationId(req as Request, res as Response)
 
-    expect(res.status).toHaveBeenCalledWith(500)
-    expect(res.json).toHaveBeenCalledWith({ error: 'Internal Server Error' })
+    expect(res.status).toHaveBeenCalledWith(HttpStatus.INTERNAL_SERVER_ERROR)
+    expect(res.json).toHaveBeenCalledWith({ error: msgBuilder.internalServerError() })
   })
 
   it('should delete a store by id', async () => {
@@ -397,7 +400,7 @@ describe('StoreController', () => {
 
     await storeController.deleteStoreById(req as Request, res as Response)
 
-    expect(res.status).toHaveBeenCalledWith(200)
+    expect(res.status).toHaveBeenCalledWith(HttpStatus.OK)
     expect(res.json).toHaveBeenCalledWith({ msg: 'Store deleted successfully' })
   })
 
@@ -407,7 +410,7 @@ describe('StoreController', () => {
     storeService.deleteStoreById.mockRejectedValue(null)
     await storeController.deleteStoreById(req as Request, res as Response)
 
-    expect(res.status).toHaveBeenCalledWith(500)
-    expect(res.json).toHaveBeenCalledWith({ error: 'Internal Server Error' })
+    expect(res.status).toHaveBeenCalledWith(HttpStatus.INTERNAL_SERVER_ERROR)
+    expect(res.json).toHaveBeenCalledWith({ error: msgBuilder.internalServerError() })
   })
 })

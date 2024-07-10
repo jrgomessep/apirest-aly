@@ -2,9 +2,12 @@ import { type StoreService } from '@/application'
 import { type StoreResultModel } from '@/domain/interfaces'
 import { type HttpErrorResponse, type Store } from '@/domain/models'
 import { type Request, type Response } from 'express'
+import { HttpStatus, MessageBuilder } from '@/shared/utils'
 
-export class StoreController {
-  constructor (private readonly storeService: StoreService) {}
+export class StoreController extends MessageBuilder {
+  constructor (private readonly storeService: StoreService) {
+    super('Store')
+  }
 
   async createStore (req: Request, res: Response): Promise<Response<StoreResultModel | HttpErrorResponse>> {
     const store: Store.CreateStore = req.body
@@ -12,12 +15,12 @@ export class StoreController {
     try {
       const result = await this.storeService.createStore(store)
       if (result instanceof Error) {
-        return res.status(400).json({ error: result.message })
+        return res.status(HttpStatus.BAD_REQUEST).json({ error: result.message })
       } else {
-        return res.status(201).json(result)
+        return res.status(HttpStatus.CREATED).json(result)
       }
     } catch (error) {
-      return res.status(500).json({ error: 'Internal Server Error' })
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: this.internalServerError() })
     }
   }
 
@@ -27,12 +30,12 @@ export class StoreController {
     try {
       const result = await this.storeService.createStoreWithNames(store)
       if (result instanceof Error) {
-        return res.status(400).json({ error: result.message })
+        return res.status(HttpStatus.BAD_REQUEST).json({ error: result.message })
       } else {
-        return res.status(201).json(result)
+        return res.status(HttpStatus.CREATED).json(result)
       }
     } catch (error) {
-      return res.status(500).json({ error: 'Internal Server Error' })
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: this.internalServerError() })
     }
   }
 
@@ -42,12 +45,12 @@ export class StoreController {
     try {
       const result = await this.storeService.updateStoreName(store)
       if (result instanceof Error) {
-        return res.status(400).json({ error: result.message })
+        return res.status(HttpStatus.BAD_REQUEST).json({ error: result.message })
       } else {
-        return res.status(200).json(result)
+        return res.status(HttpStatus.OK).json(result)
       }
     } catch (error) {
-      return res.status(500).json({ error: 'Internal Server Error' })
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: this.internalServerError() })
     }
   }
 
@@ -57,12 +60,12 @@ export class StoreController {
     try {
       const result = await this.storeService.updateStoreEmployers(store)
       if (result instanceof Error) {
-        return res.status(400).json({ error: result.message })
+        return res.status(HttpStatus.BAD_REQUEST).json({ error: result.message })
       } else {
-        return res.status(200).json(result)
+        return res.status(HttpStatus.OK).json(result)
       }
     } catch (error) {
-      return res.status(500).json({ error: 'Internal Server Error' })
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: this.internalServerError() })
     }
   }
 
@@ -72,12 +75,12 @@ export class StoreController {
     try {
       const result = await this.storeService.updateStoreOwner(store)
       if (result instanceof Error) {
-        return res.status(400).json({ error: result.message })
+        return res.status(HttpStatus.BAD_REQUEST).json({ error: result.message })
       } else {
-        return res.status(200).json(result)
+        return res.status(HttpStatus.OK).json(result)
       }
     } catch (error) {
-      return res.status(500).json({ error: 'Internal Server Error' })
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: this.internalServerError() })
     }
   }
 
@@ -87,12 +90,12 @@ export class StoreController {
     try {
       const result = await this.storeService.updateStoreLocation(store)
       if (result instanceof Error) {
-        return res.status(400).json({ error: result.message })
+        return res.status(HttpStatus.BAD_REQUEST).json({ error: result.message })
       } else {
-        return res.status(200).json(result)
+        return res.status(HttpStatus.OK).json(result)
       }
     } catch (error) {
-      return res.status(500).json({ error: 'Internal Server Error' })
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: this.internalServerError() })
     }
   }
 
@@ -102,21 +105,21 @@ export class StoreController {
     try {
       const result = await this.storeService.updateStoreExternalId(store)
       if (result instanceof Error) {
-        return res.status(400).json({ error: result.message })
+        return res.status(HttpStatus.BAD_REQUEST).json({ error: result.message })
       } else {
-        return res.status(200).json(result)
+        return res.status(HttpStatus.OK).json(result)
       }
     } catch (error) {
-      return res.status(500).json({ error: 'Internal Server Error' })
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: this.internalServerError() })
     }
   }
 
   async getAllStores (req: Request, res: Response): Promise<Response<Store.StoreList | HttpErrorResponse>> {
     try {
       const stores = await this.storeService.getAllStores()
-      return res.status(200).json(stores)
+      return res.status(HttpStatus.OK).json(stores)
     } catch (error) {
-      return res.status(500).json({ error: 'Internal Server Error' })
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: this.internalServerError() })
     }
   }
 
@@ -126,12 +129,12 @@ export class StoreController {
     try {
       const store = await this.storeService.getStoreById({ id: parseInt(id, 10) })
       if (store !== null && store !== undefined) {
-        return res.status(200).json(store)
+        return res.status(HttpStatus.OK).json(store)
       } else {
-        return res.status(404).json({ error: 'Store not found' })
+        return res.status(HttpStatus.NOT_FOUND).json({ error: this.notFound() })
       }
     } catch (error) {
-      return res.status(500).json({ error: 'Internal Server Error' })
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: this.internalServerError() })
     }
   }
 
@@ -140,9 +143,9 @@ export class StoreController {
 
     try {
       const stores = await this.storeService.getStoresByExternalId(parseInt(externalId, 10))
-      return res.status(200).json(stores)
+      return res.status(HttpStatus.OK).json(stores)
     } catch (error) {
-      return res.status(500).json({ error: 'Internal Server Error' })
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: this.internalServerError() })
     }
   }
 
@@ -151,9 +154,9 @@ export class StoreController {
 
     try {
       const stores = await this.storeService.getStoresByOwnerId(parseInt(ownerId, 10))
-      return res.status(200).json(stores)
+      return res.status(HttpStatus.OK).json(stores)
     } catch (error) {
-      return res.status(500).json({ error: 'Internal Server Error' })
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: this.internalServerError() })
     }
   }
 
@@ -162,9 +165,9 @@ export class StoreController {
 
     try {
       const stores = await this.storeService.getStoresByLocationId(parseInt(locationId, 10))
-      return res.status(200).json(stores)
+      return res.status(HttpStatus.OK).json(stores)
     } catch (error) {
-      return res.status(500).json({ error: 'Internal Server Error' })
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: this.internalServerError() })
     }
   }
 
@@ -173,9 +176,9 @@ export class StoreController {
 
     try {
       const result = await this.storeService.deleteStoreById({ id: parseInt(id, 10) })
-      return res.status(200).json(result)
+      return res.status(HttpStatus.OK).json(result)
     } catch (error) {
-      return res.status(500).json({ error: 'Internal Server Error' })
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: this.internalServerError() })
     }
   }
 }

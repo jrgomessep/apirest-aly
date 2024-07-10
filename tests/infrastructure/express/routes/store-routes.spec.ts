@@ -3,14 +3,17 @@ import { type Express } from 'express'
 import { setupApp } from '@/infrastructure/express/config/app'
 import { prismaMock } from '@/mocks/prisma-mock'
 import { storeMocked, storeMockedList, storeMockedResult, type StoreMockedResult } from '@/tests/mocks/store-mock'
+import { HttpStatus, MessageBuilder } from '@/shared/utils'
 
 jest.mock('@prisma/client')
 
 describe('Store Routes', () => {
   let app: Express
+  let msgBuilder: MessageBuilder
 
   beforeAll(async () => {
     app = await setupApp(prismaMock)
+    msgBuilder = new MessageBuilder('Store')
   })
 
   it('should create a store', async () => {
@@ -20,7 +23,7 @@ describe('Store Routes', () => {
     const response = await request(app)
       .post('/stores')
       .send(store)
-      .expect(201)
+      .expect(HttpStatus.CREATED)
 
     expect(response.body).toEqual(store)
   })
@@ -32,9 +35,9 @@ describe('Store Routes', () => {
     const response = await request(app)
       .post('/stores')
       .send(store)
-      .expect(400)
+      .expect(HttpStatus.BAD_REQUEST)
 
-    expect(response.body).toEqual({ error: 'Store must have a name!' })
+    expect(response.body).toEqual({ error: msgBuilder.missingParam('name') })
   })
 
   it('should create a store with names', async () => {
@@ -55,7 +58,7 @@ describe('Store Routes', () => {
     const response = await request(app)
       .post('/stores/names')
       .send(storeWithNames)
-      .expect(201)
+      .expect(HttpStatus.CREATED)
 
     expect(response.body).toEqual(store)
   })
@@ -67,9 +70,9 @@ describe('Store Routes', () => {
     const response = await request(app)
       .post('/stores/names')
       .send(store)
-      .expect(400)
+      .expect(HttpStatus.BAD_REQUEST)
 
-    expect(response.body).toEqual({ error: 'Store must have a name!' })
+    expect(response.body).toEqual({ error: msgBuilder.missingParam('name') })
   })
 
   it('should return 400 if exists a store with the same externalId', async () => {
@@ -80,7 +83,7 @@ describe('Store Routes', () => {
     const response = await request(app)
       .post('/stores/names')
       .send(store)
-      .expect(400)
+      .expect(HttpStatus.BAD_REQUEST)
 
     expect(response.body).toEqual({ error: `Is there a store with id ${store.externalId}` })
   })
@@ -93,7 +96,7 @@ describe('Store Routes', () => {
     const response = await request(app)
       .put('/stores/name')
       .send(store)
-      .expect(200)
+      .expect(HttpStatus.OK)
 
     expect(response.body).toEqual(store)
   })
@@ -104,9 +107,9 @@ describe('Store Routes', () => {
     const response = await request(app)
       .put('/stores/name')
       .send(store)
-      .expect(400)
+      .expect(HttpStatus.BAD_REQUEST)
 
-    expect(response.body).toEqual({ error: 'Store must have id!' })
+    expect(response.body).toEqual({ error: msgBuilder.missingParam('id') })
   })
 
   it('should return 400 if name is empty in update store name', async () => {
@@ -115,9 +118,9 @@ describe('Store Routes', () => {
     const response = await request(app)
       .put('/stores/name')
       .send(store)
-      .expect(400)
+      .expect(HttpStatus.BAD_REQUEST)
 
-    expect(response.body).toEqual({ error: 'Store must have a name!' })
+    expect(response.body).toEqual({ error: msgBuilder.missingParam('name') })
   })
 
   it('should update store employers', async () => {
@@ -129,7 +132,7 @@ describe('Store Routes', () => {
     const response = await request(app)
       .put('/stores/employers')
       .send(store)
-      .expect(200)
+      .expect(HttpStatus.OK)
 
     expect(response.body).toEqual(storeMock)
   })
@@ -140,9 +143,9 @@ describe('Store Routes', () => {
     const response = await request(app)
       .put('/stores/employers')
       .send(store)
-      .expect(400)
+      .expect(HttpStatus.BAD_REQUEST)
 
-    expect(response.body).toEqual({ error: 'Store must have id!' })
+    expect(response.body).toEqual({ error: msgBuilder.missingParam('id') })
   })
 
   it('should return 400 if numberOfEmployees is empty in update employers', async () => {
@@ -151,9 +154,9 @@ describe('Store Routes', () => {
     const response = await request(app)
       .put('/stores/employers')
       .send(store)
-      .expect(400)
+      .expect(HttpStatus.BAD_REQUEST)
 
-    expect(response.body).toEqual({ error: 'Store must have a number of employees!' })
+    expect(response.body).toEqual({ error: msgBuilder.missingParam('number of employees') })
   })
 
   it('should update store owner', async () => {
@@ -168,7 +171,7 @@ describe('Store Routes', () => {
     const response = await request(app)
       .put('/stores/owner')
       .send(store)
-      .expect(200)
+      .expect(HttpStatus.OK)
 
     expect(response.body).toEqual(storeMock)
   })
@@ -179,9 +182,9 @@ describe('Store Routes', () => {
     const response = await request(app)
       .put('/stores/owner')
       .send(store)
-      .expect(400)
+      .expect(HttpStatus.BAD_REQUEST)
 
-    expect(response.body).toEqual({ error: 'Store must have id!' })
+    expect(response.body).toEqual({ error: msgBuilder.missingParam('id') })
   })
 
   it('should return 400 if ownerId is empty in update owner', async () => {
@@ -190,9 +193,9 @@ describe('Store Routes', () => {
     const response = await request(app)
       .put('/stores/owner')
       .send(store)
-      .expect(400)
+      .expect(HttpStatus.BAD_REQUEST)
 
-    expect(response.body).toEqual({ error: 'Store must have an owner!' })
+    expect(response.body).toEqual({ error: msgBuilder.missingParam('an owner') })
   })
 
   it('should update store location', async () => {
@@ -204,7 +207,7 @@ describe('Store Routes', () => {
     const response = await request(app)
       .put('/stores/location')
       .send(store)
-      .expect(200)
+      .expect(HttpStatus.OK)
 
     expect(response.body).toEqual(storeMock)
   })
@@ -215,9 +218,9 @@ describe('Store Routes', () => {
     const response = await request(app)
       .put('/stores/location')
       .send(store)
-      .expect(400)
+      .expect(HttpStatus.BAD_REQUEST)
 
-    expect(response.body).toEqual({ error: 'Store must have id!' })
+    expect(response.body).toEqual({ error: msgBuilder.missingParam('id') })
   })
 
   it('should return 400 if locationId is empty in update location', async () => {
@@ -226,9 +229,9 @@ describe('Store Routes', () => {
     const response = await request(app)
       .put('/stores/location')
       .send(store)
-      .expect(400)
+      .expect(HttpStatus.BAD_REQUEST)
 
-    expect(response.body).toEqual({ error: 'Store must have a location!' })
+    expect(response.body).toEqual({ error: msgBuilder.missingParam('location') })
   })
 
   it('should update store externalId', async () => {
@@ -240,7 +243,7 @@ describe('Store Routes', () => {
     const response = await request(app)
       .put('/stores/externalId')
       .send(store)
-      .expect(200)
+      .expect(HttpStatus.OK)
 
     expect(response.body).toEqual(storeMock)
   })
@@ -251,9 +254,9 @@ describe('Store Routes', () => {
     const response = await request(app)
       .put('/stores/externalId')
       .send(store)
-      .expect(400)
+      .expect(HttpStatus.BAD_REQUEST)
 
-    expect(response.body).toEqual({ error: 'Store must have id!' })
+    expect(response.body).toEqual({ error: msgBuilder.missingParam('id') })
   })
 
   it('should return 400 if externalId is empty in update external', async () => {
@@ -262,9 +265,9 @@ describe('Store Routes', () => {
     const response = await request(app)
       .put('/stores/externalId')
       .send(store)
-      .expect(400)
+      .expect(HttpStatus.BAD_REQUEST)
 
-    expect(response.body).toEqual({ error: 'Store must have an externalId!' })
+    expect(response.body).toEqual({ error: msgBuilder.missingParam('an externalId') })
   })
 
   it('should get all stores', async () => {
@@ -281,7 +284,7 @@ describe('Store Routes', () => {
 
     const response = await request(app)
       .get('/stores')
-      .expect(200)
+      .expect(HttpStatus.OK)
 
     expect(response.body).toEqual(storesResult)
   })
@@ -293,7 +296,7 @@ describe('Store Routes', () => {
 
     const response = await request(app)
       .get('/stores/1')
-      .expect(200)
+      .expect(HttpStatus.OK)
 
     expect(response.body).toEqual(storeMockedResult(store))
   })
@@ -303,9 +306,9 @@ describe('Store Routes', () => {
 
     const response = await request(app)
       .get('/stores/999')
-      .expect(404)
+      .expect(HttpStatus.NOT_FOUND)
 
-    expect(response.body).toEqual({ error: 'Store not found' })
+    expect(response.body).toEqual({ error: msgBuilder.notFound() })
   })
 
   it('should get stores by externalId', async () => {
@@ -317,7 +320,7 @@ describe('Store Routes', () => {
 
     const response = await request(app)
       .get('/stores/external/1')
-      .expect(200)
+      .expect(HttpStatus.OK)
 
     expect(response.body).toEqual(storesResult)
   })
@@ -331,7 +334,7 @@ describe('Store Routes', () => {
 
     const response = await request(app)
       .get('/stores/owner/1')
-      .expect(200)
+      .expect(HttpStatus.OK)
 
     expect(response.body).toEqual(storesResult)
   })
@@ -345,7 +348,7 @@ describe('Store Routes', () => {
 
     const response = await request(app)
       .get('/stores/location/2')
-      .expect(200)
+      .expect(HttpStatus.OK)
 
     expect(response.body).toEqual(storesResult)
   })
@@ -353,7 +356,7 @@ describe('Store Routes', () => {
   it('should delete a store by id', async () => {
     const response = await request(app)
       .delete('/stores/1')
-      .expect(200)
+      .expect(HttpStatus.OK)
 
     expect(response.body).toEqual({ msg: 'Store deleted successfully!' })
   })

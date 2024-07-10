@@ -1,12 +1,16 @@
 import { StoreService } from '@/application'
 import { prismaMock } from '@/mocks/prisma-mock'
+import { MessageBuilder } from '@/shared/utils'
 
 jest.mock('@prisma/client')
 
 describe('StoreService', () => {
   let storeService: StoreService
+  let msgBuilder: MessageBuilder
+
   beforeAll(() => {
     storeService = new StoreService(prismaMock)
+    msgBuilder = new MessageBuilder('Store')
   })
   it('should create a new store', async () => {
     const store = {
@@ -35,7 +39,7 @@ describe('StoreService', () => {
       disabled: false
     }
     prismaMock.store.create.mockResolvedValue(store)
-    await expect(storeService.createStore(store)).resolves.toEqual(new Error('Store must have a name!'))
+    await expect(storeService.createStore(store)).resolves.toEqual(new Error(msgBuilder.missingParam('name')))
   })
 
   it('should create a new store with names', async () => {
@@ -95,7 +99,7 @@ describe('StoreService', () => {
     prismaMock.location.findFirst.mockResolvedValue({ id: 1, name: 'Location 1' })
     prismaMock.owner.findFirst.mockResolvedValue({ id: 1, name: 'Rich' })
     prismaMock.store.create.mockResolvedValue({ locationId: 1, ownerId: 1, ...store })
-    await expect(storeService.createStoreWithNames({ location: 'Location 1', owner: 'Rich', ...store })).resolves.toEqual(new Error('Store must have a name!'))
+    await expect(storeService.createStoreWithNames({ location: 'Location 1', owner: 'Rich', ...store })).resolves.toEqual(new Error(msgBuilder.missingParam('name')))
   })
 
   it('should create a new store with names when don\'t exists in DB ', async () => {
@@ -147,7 +151,7 @@ describe('StoreService', () => {
       disabled: false
     }
     prismaMock.store.update.mockResolvedValue(store)
-    await expect(storeService.updateStoreName(store)).resolves.toEqual(new Error('Store must have a name!'))
+    await expect(storeService.updateStoreName(store)).resolves.toEqual(new Error(msgBuilder.missingParam('name')))
   })
 
   it('should fail if store does not have id', async () => {
@@ -162,7 +166,7 @@ describe('StoreService', () => {
       disabled: false
     }
     prismaMock.store.update.mockResolvedValue(store)
-    await expect(storeService.updateStoreName(store)).resolves.toEqual(new Error('Store must have id!'))
+    await expect(storeService.updateStoreName(store)).resolves.toEqual(new Error(msgBuilder.missingParam('id')))
   })
 
   it('should update a store employers', async () => {
@@ -191,7 +195,7 @@ describe('StoreService', () => {
       ownerId: 1,
       disabled: false
     }
-    await expect(storeService.updateStoreEmployers(store)).resolves.toEqual(new Error('Store must have id!'))
+    await expect(storeService.updateStoreEmployers(store)).resolves.toEqual(new Error(msgBuilder.missingParam('id')))
   })
 
   it('should fail if update store employers does not have employers', async () => {
@@ -205,7 +209,7 @@ describe('StoreService', () => {
       ownerId: 1,
       disabled: false
     }
-    await expect(storeService.updateStoreEmployers(store)).resolves.toEqual(new Error('Store must have a number of employees!'))
+    await expect(storeService.updateStoreEmployers(store)).resolves.toEqual(new Error(msgBuilder.missingParam('number of employees')))
   })
 
   it('should update a store owner', async () => {
@@ -234,7 +238,7 @@ describe('StoreService', () => {
       ownerId: 1,
       disabled: false
     }
-    await expect(storeService.updateStoreOwner(store)).resolves.toEqual(new Error('Store must have id!'))
+    await expect(storeService.updateStoreOwner(store)).resolves.toEqual(new Error(msgBuilder.missingParam('id')))
   })
 
   it('should fail if update store owner does not have owner', async () => {
@@ -248,7 +252,7 @@ describe('StoreService', () => {
       ownerId: null as any,
       disabled: false
     }
-    await expect(storeService.updateStoreOwner(store)).resolves.toEqual(new Error('Store must have an owner!'))
+    await expect(storeService.updateStoreOwner(store)).resolves.toEqual(new Error(msgBuilder.missingParam('an owner')))
   })
 
   it('should update a store locationId', async () => {
@@ -277,7 +281,7 @@ describe('StoreService', () => {
       ownerId: 1,
       disabled: false
     }
-    await expect(storeService.updateStoreLocation(store)).resolves.toEqual(new Error('Store must have id!'))
+    await expect(storeService.updateStoreLocation(store)).resolves.toEqual(new Error(msgBuilder.missingParam('id')))
   })
 
   it('should fail if store does not have locationId', async () => {
@@ -291,7 +295,7 @@ describe('StoreService', () => {
       ownerId: 1,
       disabled: false
     }
-    await expect(storeService.updateStoreLocation(store)).resolves.toEqual(new Error('Store must have a location!'))
+    await expect(storeService.updateStoreLocation(store)).resolves.toEqual(new Error(msgBuilder.missingParam('location')))
   })
 
   it('should update externalId', async () => {
@@ -320,7 +324,7 @@ describe('StoreService', () => {
       ownerId: 1,
       disabled: false
     }
-    await expect(storeService.updateStoreExternalId(store)).resolves.toEqual(new Error('Store must have id!'))
+    await expect(storeService.updateStoreExternalId(store)).resolves.toEqual(new Error(msgBuilder.missingParam('id')))
   })
 
   it('should fail if store does not have externalId', async () => {
@@ -334,7 +338,7 @@ describe('StoreService', () => {
       ownerId: 1,
       disabled: false
     }
-    await expect(storeService.updateStoreExternalId(store)).resolves.toEqual(new Error('Store must have an externalId!'))
+    await expect(storeService.updateStoreExternalId(store)).resolves.toEqual(new Error(msgBuilder.missingParam('an externalId')))
   })
 
   it('should get all stores with owner and location names', async () => {
